@@ -5,6 +5,7 @@
 from typing import List
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field, field_validator
+import json
 
 
 class Settings(BaseSettings):
@@ -38,10 +39,20 @@ class Settings(BaseSettings):
     @classmethod
     def assemble_cors_origins(cls, v):
         """Преобразует строку или список в список строк для CORS."""
-        if isinstance(v, str) and not v.startswith("["):
-            return [i.strip() for i in v.split(",")]
-        elif isinstance(v, (list, str)):
-            return v
+        # Если пришла строка-массив типа: ["http://localhost:3000","http://localhost:5173"]
+        if isinstance(v, str) and v.strip().startswith("["):
+            try:
+                parsed = json.loads(v)
+                if isinstance(parsed, list):
+                    return [str(i).strip() for i in parsed]
+            except Exception:
+                pass
+        # Если пришла простая строка с запятыми
+        if isinstance(v, str):
+            return [i.strip() for i in v.split(",") if i.strip()]
+        # Если это уже список
+        if isinstance(v, list):
+            return [str(i).strip() for i in v]
         raise ValueError(v)
 
 

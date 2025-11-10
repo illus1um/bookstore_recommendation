@@ -3,7 +3,7 @@
 """
 from datetime import datetime
 from typing import Optional, Dict, Any
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from app.models.interaction import InteractionType
 
 
@@ -27,6 +27,11 @@ class InteractionInDB(InteractionBase):
     
     class Config:
         from_attributes = True
+
+    @field_validator("id", "user_id", "book_id", mode="before")
+    @classmethod
+    def convert_ids(cls, value):
+        return str(value)
 
 
 class Interaction(InteractionInDB):

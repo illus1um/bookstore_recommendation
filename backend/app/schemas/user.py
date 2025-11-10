@@ -3,7 +3,7 @@
 """
 from datetime import datetime
 from typing import Optional, List
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 
 class UserBase(BaseModel):
@@ -46,6 +46,11 @@ class UserInDB(UserBase):
     
     class Config:
         from_attributes = True
+
+    @field_validator("id", mode="before")
+    @classmethod
+    def convert_id(cls, value):
+        return str(value)
 
 
 class User(UserInDB):

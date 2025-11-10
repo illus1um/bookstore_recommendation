@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  font-family: 'Inter', system-ui, sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: theme('colors.neutral.50');
+  color: theme('colors.neutral.900');
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.glass-panel {
+  @apply bg-white/80 backdrop-blur shadow-card rounded-xl border border-white/30;
+}
+
+.section {
+  @apply py-12 md:py-16;
+}
