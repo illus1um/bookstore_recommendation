@@ -10,6 +10,8 @@ import NotFoundPage from './pages/NotFoundPage'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 import AdminDashboardPage from './pages/AdminDashboardPage'
 import AdminRoute from './components/auth/AdminRoute'
+import CartPage from './pages/CartPage'
+import CheckoutPage from './pages/CheckoutPage'
 
 const App = () => (
   <Routes>
@@ -22,6 +24,22 @@ const App = () => (
         element={
           <ProtectedRoute>
             <ProfilePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="cart"
+        element={
+          <ProtectedRoute>
+            <CartPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="checkout"
+        element={
+          <ProtectedRoute>
+            <CheckoutPage />
           </ProtectedRoute>
         }
       />

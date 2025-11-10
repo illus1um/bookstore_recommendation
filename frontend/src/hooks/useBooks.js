@@ -1,10 +1,5 @@
 import { useMemo } from 'react'
-import {
-  useInfiniteQuery,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import booksApi from '../api/books'
 import { formatPrice } from '../utils/helpers'
 
@@ -13,6 +8,7 @@ export const booksKeys = {
   lists: (filters) => [...booksKeys.all, 'list', filters],
   details: (id) => [...booksKeys.all, 'detail', id],
   search: (query) => [...booksKeys.all, 'search', query],
+  filters: () => [...booksKeys.all, 'filters'],
 }
 
 export const useBookList = (filters) =>
@@ -22,7 +18,7 @@ export const useBookList = (filters) =>
       const response = await booksApi.getBooks(filters)
       return response.data
     },
-    keepPreviousData: true,
+    staleTime: 1000 * 30, // 30 секунд
   })
 
 export const useBook = (bookId) =>
@@ -45,20 +41,14 @@ export const useBookSearch = (query) =>
     enabled: Boolean(query?.q),
   })
 
-export const useInfiniteBooks = (filters) =>
-  useInfiniteQuery({
-    queryKey: [...booksKeys.all, 'infinite', filters],
-    queryFn: async ({ pageParam = 1 }) => {
-      const response = await booksApi.getBooks({
-        ...filters,
-        page: pageParam,
-      })
+export const useBookFilters = () =>
+  useQuery({
+    queryKey: booksKeys.filters(),
+    queryFn: async () => {
+      const response = await booksApi.getFilters()
       return response.data
     },
-    getNextPageParam: (lastPage) => {
-      if (!lastPage?.nextPage) return undefined
-      return lastPage.nextPage
-    },
+    staleTime: 1000 * 60 * 10,
   })
 
 export const useBookMutations = () => {

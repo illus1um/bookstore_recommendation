@@ -2,6 +2,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 import Header from './Header'
 import Footer from './Footer'
+import CartDrawer from '../cart/CartDrawer'
 
 const Layout = () => {
   const location = useLocation()
@@ -20,6 +21,7 @@ const Layout = () => {
         <Outlet />
       </main>
       <Footer />
+      <CartDrawer />
     </div>
   )
 }

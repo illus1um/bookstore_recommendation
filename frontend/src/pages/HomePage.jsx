@@ -1,23 +1,28 @@
 import { ArrowRight, Sparkles } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import RecommendationCarousel from '../components/recommendations/RecommendationCarousel'
-import TrendingBooks from '../components/recommendations/TrendingBooks'
 import SearchBar from '../components/books/SearchBar'
 import Button from '../components/common/Button'
-import { usePersonalRecommendations } from '../hooks/useRecommendations'
-import { useBookList } from '../hooks/useBooks'
-import { useAuthStore } from '../store/authStore'
+import RecommendationCarousel from '../components/recommendations/RecommendationCarousel'
+import RecommendationDiscovery from '../components/recommendations/RecommendationDiscovery'
+import TrendingBooks from '../components/recommendations/TrendingBooks'
+import { useNewBooks } from '../hooks/useRecommendations'
+import { useCartActions } from '../hooks/useCartActions'
 import Loading from '../components/common/Loading'
+import ErrorMessage from '../components/common/ErrorMessage'
+import { useBookFilters } from '../hooks/useBooks'
 
 const HomePage = () => {
-  const { isAuthenticated } = useAuthStore()
-  const { data: recs, isLoading: recsLoading } = usePersonalRecommendations(
-    isAuthenticated,
-  )
-  const { data: newBooks, isLoading: newBooksLoading } = useBookList({
-    sort: 'newest',
-    limit: 12,
-  })
+  const {
+    data: newBooks,
+    isLoading: newBooksLoading,
+    isError: newBooksError,
+    refetch: refetchNewBooks,
+    isFetching: isFetchingNewBooks,
+  } = useNewBooks({ limit: 12 })
+  const { data: filters } = useBookFilters()
+  const { handleAddToCart, handleToggleFavorite } = useCartActions()
+
+  const genresToShow = (filters?.genres ?? []).slice(0, 6)
 
   return (
     <div>
@@ -83,28 +88,20 @@ const HomePage = () => {
       </section>
 
       <section className="container mx-auto px-4 py-12 md:py-16">
-        <TrendingBooks />
+        <RecommendationDiscovery genres={genresToShow} />
       </section>
 
-      {isAuthenticated && (
-        <section className="container mx-auto px-4 py-12 md:py-16">
-          {recsLoading ? (
-            <Loading message="Подбираем рекомендации..." />
-          ) : (
-            <RecommendationCarousel
-              books={recs}
-              title="Рекомендовано для вас"
-              subtitle="На основе ваших предпочтений и истории"
-            />
-          )}
-        </section>
-      )}
+      <section className="container mx-auto px-4 py-12 md:py-16">
+        <TrendingBooks />
+      </section>
 
       <section className="container mx-auto px-4 py-12 md:py-16">
         <div className="mb-4 flex items-center justify-between">
           <div>
             <h2 className="text-xl font-semibold text-neutral-900">Новинки</h2>
-            <p className="text-sm text-neutral-500">Самые свежие издания этого месяца</p>
+            <p className="text-sm text-neutral-500">
+              Самые свежие издания этого месяца
+            </p>
           </div>
           <Link
             to="/catalog?sort=newest"
@@ -113,12 +110,74 @@ const HomePage = () => {
             Смотреть все
           </Link>
         </div>
-        {newBooksLoading ? (
+        {newBooksLoading || (isFetchingNewBooks && !newBooks?.length) ? (
           <Loading message="Загружаем новинки..." />
+        ) : newBooksError ? (
+          <ErrorMessage
+            description="Не удалось загрузить новинки."
+            action={
+              <Button variant="secondary" size="sm" onClick={() => refetchNewBooks()}>
+                Повторить попытку
+              </Button>
+            }
+          />
+        ) : (newBooks ?? []).length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-neutral-200 bg-neutral-50 p-8 text-center text-neutral-500">
+            Пока нет новинок для отображения. Загляните позже или посмотрите каталог.
+          </div>
         ) : (
-          <RecommendationCarousel books={newBooks?.items ?? newBooks ?? []} />
+          <RecommendationCarousel 
+            books={newBooks ?? []} 
+            onAddToCart={handleAddToCart}
+            onToggleFavorite={handleToggleFavorite}
+          />
         )}
       </section>
+
+      {genresToShow.length > 0 && (
+        <section className="container mx-auto px-4 py-12 md:py-16">
+          <div className="mb-6 flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-semibold text-neutral-900">Популярные жанры</h2>
+              <p className="text-sm text-neutral-500">
+                Выбирайте настроение и находите новые истории
+              </p>
+            </div>
+            <Link
+              to="/catalog"
+              className="text-sm font-medium text-primary hover:underline"
+            >
+              Весь каталог
+            </Link>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {genresToShow.map((genre) => (
+              <Link
+                key={genre}
+                to={`/catalog?genres=${encodeURIComponent(genre)}`}
+                className="group relative overflow-hidden rounded-3xl bg-white p-6 shadow-card transition hover:-translate-y-1 hover:shadow-lg"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-primary/10 opacity-0 transition group-hover:opacity-100" />
+                <div className="relative">
+                  <span className="text-sm font-medium uppercase tracking-wide text-primary">
+                    Жанр
+                  </span>
+                  <h3 className="mt-2 text-2xl font-semibold text-neutral-900">
+                    {genre}
+                  </h3>
+                  <p className="mt-3 text-sm text-neutral-500">
+                    Посмотрите подборку лучших книг в жанре {genre.toLowerCase()}.
+                  </p>
+                  <span className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-primary">
+                    Открыть подборку
+                    <ArrowRight className="h-4 w-4" />
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   )
 }

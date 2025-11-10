@@ -49,7 +49,11 @@ async def create_interaction(
             ).to_list()
             
             # Вычисляем новый средний рейтинг
-            ratings = [r.metadata.get("rating") for r in reviews if r.metadata.get("rating")]
+            ratings = [
+                r.metadata.rating
+                for r in reviews
+                if getattr(r.metadata, "rating", None) is not None
+            ]
             ratings.append(rating)
             book.average_rating = sum(ratings) / len(ratings)
             await book.save()

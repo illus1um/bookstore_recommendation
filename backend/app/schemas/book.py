@@ -2,7 +2,7 @@
 Схемы для работы с книгами.
 """
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional, List, Dict
 from pydantic import BaseModel, Field, field_validator
 
 
@@ -66,6 +66,15 @@ class Book(BookInDB):
     pass
 
 
+class BookListResponse(BaseModel):
+    """Ответ для списков книг с пагинацией."""
+
+    items: List[Book]
+    total_count: int
+    page: int
+    limit: int
+
+
 class BookSearch(BaseModel):
     """Схема для поиска книг."""
     query: Optional[str] = None
@@ -76,4 +85,16 @@ class BookSearch(BaseModel):
     min_rating: Optional[float] = Field(None, ge=0.0, le=5.0)
     page: int = Field(default=1, ge=1)
     page_size: int = Field(default=20, ge=1, le=100)
+
+
+class BookFiltersResponse(BaseModel):
+    """Доступные фильтры каталога."""
+
+    genres: List[str] = Field(default_factory=list)
+    authors: List[str] = Field(default_factory=list)
+    languages: List[str] = Field(default_factory=list)
+    publication_years: List[int] = Field(default_factory=list)
+    price_range: Dict[str, Optional[float]] = Field(
+        default_factory=lambda: {"min": None, "max": None}
+    )
 

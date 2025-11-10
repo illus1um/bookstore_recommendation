@@ -5,8 +5,12 @@ import { toast } from 'react-hot-toast'
 import Card from '../components/common/Card'
 import Button from '../components/common/Button'
 import Loading from '../components/common/Loading'
+import ErrorMessage from '../components/common/ErrorMessage'
 import { useAuth } from '../hooks/useAuth'
 import { useInteractions } from '../hooks/useInteractions'
+import { usePersonalRecommendations } from '../hooks/useRecommendations'
+import { useOrders } from '../hooks/useOrders'
+import RecommendationCarousel from '../components/recommendations/RecommendationCarousel'
 import usersApi from '../api/users'
 import { GENRES } from '../utils/constants'
 import { formatDate, formatPrice, getInitials } from '../utils/helpers'
@@ -25,6 +29,18 @@ const ProfilePage = () => {
     },
     enabled: Boolean(userId),
   })
+
+  const {
+    data: personalRecs,
+    isLoading: recsLoading,
+    isError: recsError,
+  } = usePersonalRecommendations(Boolean(userId))
+
+  const {
+    data: ordersData,
+    isLoading: ordersLoading,
+    isError: ordersError,
+  } = useOrders()
 
   const {
     register,
@@ -180,34 +196,48 @@ const ProfilePage = () => {
             </form>
           </Card>
 
-          <Card
-            header={<h3 className="text-lg font-semibold">История покупок</h3>}
-          >
-            {isLoading || historyQuery.isLoading ? (
-              <Loading message="Загружаем историю..." />
-            ) : purchases.length ? (
+          <Card header={<h3 className="text-lg font-semibold">Мои заказы</h3>}>
+            {ordersLoading ? (
+              <Loading message="Загружаем заказы..." />
+            ) : ordersError ? (
+              <ErrorMessage description="Не удалось загрузить заказы." />
+            ) : ordersData?.length ? (
               <ul className="divide-y divide-neutral-100">
-                {purchases.map((item) => (
-                  <li key={item.id} className="flex items-center justify-between py-3">
+                {ordersData.slice(0, 5).map((order) => (
+                  <li key={order.id} className="flex items-center justify-between py-3">
                     <div>
                       <p className="text-sm font-medium text-neutral-800">
-                        {item.metadata?.title || 'Покупка'}
+                        Заказ #{order.id.slice(0, 8)}
                       </p>
                       <p className="text-xs text-neutral-500">
-                        {formatDate(item.timestamp)}
+                        {formatDate(order.created_at)} • {order.status}
                       </p>
                     </div>
                     <span className="text-sm font-semibold text-neutral-700">
-                      {item.metadata?.price
-                        ? formatPrice(item.metadata.price)
-                        : `${item.metadata?.quantity || 1} шт.`}
+                      {formatPrice(order.total_price)}
                     </span>
                   </li>
                 ))}
               </ul>
             ) : (
               <p className="text-sm text-neutral-500">
-                Вы ещё не совершали покупок. Начните с просмотра каталога!
+                У вас пока нет заказов. Начните с просмотра каталога!
+              </p>
+            )}
+          </Card>
+
+          <Card
+            header={<h3 className="text-lg font-semibold">Рекомендовано для вас</h3>}
+          >
+            {recsLoading ? (
+              <Loading message="Подбираем рекомендации..." />
+            ) : recsError ? (
+              <ErrorMessage description="Не удалось загрузить рекомендации." />
+            ) : personalRecs?.length ? (
+              <RecommendationCarousel books={personalRecs} />
+            ) : (
+              <p className="text-sm text-neutral-500">
+                Взаимодействуйте с каталогом, чтобы получить персональные рекомендации.
               </p>
             )}
           </Card>

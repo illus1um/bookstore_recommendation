@@ -4,11 +4,15 @@ import Button from '../common/Button'
 import SearchBar from '../books/SearchBar'
 import { useAuthStore } from '../../store/authStore'
 import { useAuth } from '../../hooks/useAuth'
+import { useCart } from '../../hooks/useCart'
+import useUIStore from '../../store/uiStore'
 
 const Header = () => {
   const navigate = useNavigate()
   const { isAuthenticated, user } = useAuthStore()
   const { logout, logoutStatus } = useAuth()
+  const { cart } = useCart()
+  const { toggleCart } = useUIStore()
 
   const navItems = [
     { to: '/', label: 'Главная' },
@@ -64,11 +68,12 @@ const Header = () => {
             type="button"
             className="relative hidden items-center gap-2 rounded-full border border-neutral-200 px-3 py-2 text-sm text-neutral-600 transition hover:border-primary hover:text-primary md:flex"
             aria-label="Корзина"
+            onClick={toggleCart}
           >
             <ShoppingCart className="h-4 w-4" />
             <span>Корзина</span>
             <span className="absolute -right-2 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs text-white shadow-card">
-              0
+              {cart?.total_items ?? 0}
             </span>
           </button>
 

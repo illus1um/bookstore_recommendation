@@ -2,7 +2,13 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useRef } from 'react'
 import BookCard from '../books/BookCard'
 
-const RecommendationCarousel = ({ books = [], title, subtitle }) => {
+const RecommendationCarousel = ({ 
+  books = [], 
+  title, 
+  subtitle, 
+  onAddToCart, 
+  onToggleFavorite 
+}) => {
   const scrollRef = useRef(null)
 
   const scroll = (direction) => {
@@ -53,7 +59,11 @@ const RecommendationCarousel = ({ books = [], title, subtitle }) => {
             key={book.id}
             className="min-w-[240px] snap-center lg:min-w-[260px]"
           >
-            <BookCard book={book} />
+            <BookCard 
+              book={book} 
+              onAddToCart={onAddToCart}
+              onToggleFavorite={onToggleFavorite}
+            />
           </div>
         ))}
       </div>

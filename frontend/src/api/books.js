@@ -17,6 +17,7 @@ export const booksApi = {
   getBook: (bookId) => axiosInstance.get(`${BOOKS_BASE}/${bookId}`),
   search: (query) =>
     axiosInstance.get(`${BOOKS_BASE}/search`, { params: sanitizeParams(query) }),
+  getFilters: () => axiosInstance.get(`${BOOKS_BASE}/filters`),
   createBook: (data) => axiosInstance.post(`${BOOKS_BASE}/`, data),
   updateBook: (bookId, data) => axiosInstance.put(`${BOOKS_BASE}/${bookId}`, data),
   deleteBook: (bookId) => axiosInstance.delete(`${BOOKS_BASE}/${bookId}`),

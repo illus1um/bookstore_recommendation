@@ -3,7 +3,16 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.db.mongodb import connect_to_mongo, close_mongo_connection
-from app.api.endpoints import auth, users, books, interactions, recommendations
+from app.api.endpoints import (
+    auth,
+    users,
+    books,
+    interactions,
+    recommendations,
+    cart,
+    orders,
+    analytics,
+)
 
 
 @asynccontextmanager
@@ -53,6 +62,21 @@ app.include_router(
     recommendations.router,
     prefix=f"{settings.API_V1_STR}/recommendations",
     tags=["recommendations"]
+)
+app.include_router(
+    cart.router,
+    prefix=f"{settings.API_V1_STR}/cart",
+    tags=["cart"]
+)
+app.include_router(
+    orders.router,
+    prefix=f"{settings.API_V1_STR}/orders",
+    tags=["orders"]
+)
+app.include_router(
+    analytics.router,
+    prefix=f"{settings.API_V1_STR}/analytics",
+    tags=["analytics"]
 )
 
 

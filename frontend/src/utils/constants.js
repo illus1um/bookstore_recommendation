@@ -22,15 +22,16 @@ export const GENRES = [
 export const SORT_OPTIONS = [
   { value: 'price_asc', label: 'Цена: по возрастанию' },
   { value: 'price_desc', label: 'Цена: по убыванию' },
-  { value: 'rating_desc', label: 'Рейтинг: по убыванию' },
-  { value: 'rating_asc', label: 'Рейтинг: по возрастанию' },
+  { value: 'rating', label: 'Рейтинг' },
+  { value: 'popularity', label: 'Популярные' },
   { value: 'newest', label: 'Новинки' },
 ]
 
 export const INTERACTION_TYPES = {
   VIEW: 'view',
   LIKE: 'like',
-  CART: 'cart',
+  ADD_TO_CART: 'add_to_cart',
+  REMOVE_FROM_CART: 'remove_from_cart',
   PURCHASE: 'purchase',
   REVIEW: 'review',
 }

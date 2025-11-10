@@ -1,7 +1,7 @@
 """
 API endpoints для получения рекомендаций.
 """
-from typing import List
+from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from app.models.book import Book
 from app.models.user import User
@@ -116,4 +116,18 @@ async def get_recommendations_by_genre(
         user_id=user_id
     )
     return recommendations
+
+
+@router.get("/new", response_model=List[BookSchema])
+async def get_new_books(
+    limit: int = Query(10, ge=1, le=50),
+    user_id: Optional[str] = Query(None),
+):
+    """
+    Получает подборку новинок каталога.
+    """
+
+    user = await User.get(user_id) if user_id else None
+    new_books = await recommendation_engine.get_new_books(limit=limit, user=user)
+    return new_books
 

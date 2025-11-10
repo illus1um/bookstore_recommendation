@@ -4,10 +4,10 @@ import Loading from '../components/common/Loading'
 import ErrorMessage from '../components/common/ErrorMessage'
 import BookDetail from '../components/books/BookDetail'
 import { useBook } from '../hooks/useBooks'
-import { useTrackView } from '../hooks/useInteractions'
+import { useTrackView, useInteractions } from '../hooks/useInteractions'
 import { INTERACTION_TYPES } from '../utils/constants'
 import { useAuthStore } from '../store/authStore'
-import { useInteractions } from '../hooks/useInteractions'
+import { useCart } from '../hooks/useCart'
 
 const BookDetailPage = () => {
   const { bookId } = useParams()
@@ -15,6 +15,7 @@ const BookDetailPage = () => {
   const { isAuthenticated } = useAuthStore()
   const { data: book, isLoading, isError } = useBook(bookId)
   const { createInteraction } = useInteractions()
+  const { addToCart } = useCart()
 
   useTrackView(bookId, Boolean(isAuthenticated && bookId))
 
@@ -27,14 +28,9 @@ const BookDetailPage = () => {
     return true
   }
 
-  const handleAddToCart = async (item) => {
+  const handleAddToCart = async (item, quantity) => {
     if (!requireAuth()) return
-    await createInteraction({
-      book_id: item.id,
-      interaction_type: INTERACTION_TYPES.CART,
-      metadata: { quantity: 1 },
-    })
-    toast.success('Книга добавлена в корзину')
+    await addToCart({ book_id: item.id, quantity })
   }
 
   const handleLike = async (item) => {

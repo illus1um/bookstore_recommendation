@@ -7,6 +7,8 @@ from faker import Faker
 from app.models.user import User
 from app.models.book import Book
 from app.models.interaction import Interaction, InteractionType
+from app.models.cart import Cart
+from app.models.order import Order
 from app.core.security import get_password_hash
 import random
 
@@ -22,16 +24,43 @@ async def create_indexes():
     await User.get_motor_collection().create_index("username", unique=True)
     
     # Индексы для Book
-    await Book.get_motor_collection().create_index("title")
-    await Book.get_motor_collection().create_index("author")
-    await Book.get_motor_collection().create_index("genre")
-    await Book.get_motor_collection().create_index("isbn", unique=True, sparse=True)
-    
+    book_collection = Book.get_motor_collection()
+    await book_collection.create_index("title")
+    await book_collection.create_index("author")
+    await book_collection.create_index("genre")
+    await book_collection.create_index("isbn", unique=True, sparse=True)
+    await book_collection.create_index([("genre", 1), ("average_rating", -1)])
+    await book_collection.create_index([("author", 1), ("publication_year", -1)])
+    await book_collection.create_index("price")
+    await book_collection.create_index([("created_at", -1)])
+    await book_collection.create_index(
+        [
+            ("title", "text"),
+            ("description", "text"),
+            ("author", "text"),
+            ("tags", "text"),
+        ]
+    )
+
     # Индексы для Interaction
-    await Interaction.get_motor_collection().create_index("user_id")
-    await Interaction.get_motor_collection().create_index("book_id")
-    await Interaction.get_motor_collection().create_index("timestamp")
-    await Interaction.get_motor_collection().create_index([("user_id", 1), ("book_id", 1)])
+    interaction_collection = Interaction.get_motor_collection()
+    await interaction_collection.create_index("user_id")
+    await interaction_collection.create_index("book_id")
+    await interaction_collection.create_index([("timestamp", -1)])
+    await interaction_collection.create_index([("user_id", 1), ("book_id", 1)])
+    await interaction_collection.create_index(
+        [("user_id", 1), ("book_id", 1), ("interaction_type", 1)]
+    )
+    await interaction_collection.create_index([("book_id", 1), ("interaction_type", 1)])
+
+    # Индексы для Order
+    order_collection = Order.get_motor_collection()
+    await order_collection.create_index("user_id")
+    await order_collection.create_index("status")
+    await order_collection.create_index([("user_id", 1), ("created_at", -1)])
+
+    # Индексы для Cart
+    await Cart.get_motor_collection().create_index("user_id", unique=True)
     
     print("✅ Индексы созданы")
 
@@ -118,10 +147,16 @@ async def init_db():
             metadata = {}
             if interaction_type == InteractionType.REVIEW:
                 metadata["rating"] = random.randint(1, 5)
+                metadata["review_text"] = fake.text(max_nb_chars=120)
             elif interaction_type == InteractionType.PURCHASE:
                 metadata["quantity"] = random.randint(1, 3)
+                metadata["price_at_purchase"] = book.price
             elif interaction_type == InteractionType.VIEW:
                 metadata["duration"] = random.randint(10, 300)  # секунды
+            elif interaction_type == InteractionType.ADD_TO_CART:
+                metadata["quantity"] = random.randint(1, 2)
+            elif interaction_type == InteractionType.REMOVE_FROM_CART:
+                metadata["quantity"] = 0
             
             interaction = Interaction(
                 user_id=user.id,

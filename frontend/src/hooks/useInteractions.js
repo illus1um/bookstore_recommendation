@@ -42,8 +42,8 @@ export const useInteractions = ({ fetch = false, userId: overrideUserId } = {}) 
   const createInteraction = useCallback(
     (interaction) =>
       mutation.mutateAsync({
-        metadata: {},
         ...interaction,
+        metadata: interaction.metadata ?? {},
       }),
     [mutation],
   )

@@ -7,6 +7,9 @@ const API_TIMEOUT = Number(import.meta.env.VITE_API_TIMEOUT || 15000)
 export const axiosInstance = axios.create({
   baseURL: API_URL,
   timeout: API_TIMEOUT,
+  paramsSerializer: {
+    indexes: null, // Используем genres=value1&genres=value2 вместо genres[0]=value1
+  },
 })
 
 axiosInstance.interceptors.request.use(
@@ -14,6 +17,10 @@ axiosInstance.interceptors.request.use(
     const { token } = authStore.getState()
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
+    }
+    // Дебаг параметров запроса (можно удалить после проверки)
+    if (config.params && Object.keys(config.params).length > 0) {
+      console.log('API Request:', config.method?.toUpperCase(), config.url, config.params)
     }
     return config
   },
