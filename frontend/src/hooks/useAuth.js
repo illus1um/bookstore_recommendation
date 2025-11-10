@@ -45,7 +45,7 @@ export const useAuth = () => {
   const registerMutation = useMutation({
     mutationFn: (data) => authApi.register(data),
     onSuccess: () => {
-      toast.success('Регистрация прошла успешно! Выполните вход.')
+      toast.success('Регистрация прошла успешно!')
     },
     onError: (error) => {
       const message = error.response?.data?.detail || 'Ошибка регистрации.'

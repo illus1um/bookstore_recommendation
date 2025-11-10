@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Star, ShoppingCart, BookmarkPlus, Minus, Plus } from 'lucide-react'
 import Button from '../common/Button'
 import Loading from '../common/Loading'
 import ErrorMessage from '../common/ErrorMessage'
 import { formatPrice } from '../../utils/helpers'
-import RecommendationCarousel from '../recommendations/RecommendationCarousel'
 import { useSimilarBooks } from '../../hooks/useRecommendations'
 
 const DetailRow = ({ label, value }) => (
@@ -20,7 +20,7 @@ const tabs = [
   { key: 'reviews', label: 'Отзывы' },
 ]
 
-const BookDetail = ({ book, onAddToCart, onLike }) => {
+const BookDetail = ({ book, onAddToCart, onLike, onAddToCartSimilar, onToggleFavoriteSimilar }) => {
   const {
     data: similarData,
     isLoading: similarLoading,
@@ -90,89 +90,145 @@ const BookDetail = ({ book, onAddToCart, onLike }) => {
       </div>
 
       <div className="space-y-6">
-        <div className="rounded-3xl bg-white p-8 shadow-card">
-          <span className="text-sm font-medium uppercase tracking-wide text-primary">
+        <div className="rounded-3xl bg-white p-6 shadow-card sm:p-8">
+          <span className="text-xs font-bold uppercase tracking-wider text-primary sm:text-sm">
             {book.genre}
           </span>
-          <h1 className="mt-3 text-3xl font-semibold text-neutral-900 leading-tight">
+          <h1 className="mt-3 text-2xl font-bold text-neutral-900 leading-tight sm:text-3xl">
             {book.title}
           </h1>
-          <p className="mt-2 text-lg text-neutral-500">{book.author}</p>
-          <div className="mt-4 flex flex-wrap items-center gap-4 text-neutral-500">
-            <div className="flex items-center gap-1">
-              <Star className="h-5 w-5 text-amber-400" />
+          <p className="mt-2 text-base text-neutral-500 sm:text-lg">{book.author}</p>
+          <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-neutral-500 sm:gap-4">
+            <div className="flex items-center gap-1.5">
+              <Star className="h-4 w-4 fill-amber-400 text-amber-400 sm:h-5 sm:w-5" />
               <span className="font-semibold text-neutral-900">
                 {book.average_rating?.toFixed(1) ?? '—'}
               </span>
             </div>
-            <span>•</span>
-            <span>{book.page_count} страниц</span>
-            <span>•</span>
+            <span className="text-neutral-300">•</span>
+            <span>{book.page_count} стр.</span>
+            <span className="text-neutral-300">•</span>
             <span>{book.language?.toUpperCase()}</span>
-            <span>•</span>
-            <span className={`font-medium ${stockState.tone}`}>{stockState.label}</span>
+            <span className="text-neutral-300">•</span>
+            <span className={`font-semibold ${stockState.tone}`}>{stockState.label}</span>
           </div>
-          <div className="mt-6 flex flex-col gap-4 rounded-2xl bg-neutral-50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="text-sm text-neutral-500">Цена</p>
-              <p className="text-2xl font-semibold text-neutral-900">
-                {formatPrice(book.price)}
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 rounded-full border border-neutral-200 px-3 py-1">
+          <div className="mt-6 space-y-5 rounded-2xl bg-gradient-to-br from-neutral-50 to-neutral-100/50 p-5 sm:p-6">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+                  Цена
+                </p>
+                <p className="mt-1 text-3xl font-extrabold text-neutral-900 sm:text-4xl">
+                  {formatPrice(book.price)}
+                </p>
+              </div>
+              <div className="flex items-center gap-2 self-start rounded-full border-2 border-neutral-200 bg-white px-3 py-2 shadow-sm sm:self-center">
                 <button
                   type="button"
-                  className="p-1 text-neutral-500 hover:text-primary"
+                  className="flex h-9 w-9 items-center justify-center rounded-full text-neutral-600 transition hover:bg-primary hover:text-white active:scale-95"
                   onClick={handleDecrease}
+                  aria-label="Уменьшить количество"
                 >
                   <Minus className="h-4 w-4" />
                 </button>
-                <span className="w-6 text-center text-sm font-semibold text-neutral-900">
+                <span className="w-10 text-center text-lg font-bold text-neutral-900">
                   {quantity}
                 </span>
                 <button
                   type="button"
-                  className="p-1 text-neutral-500 hover:text-primary"
+                  className="flex h-9 w-9 items-center justify-center rounded-full text-neutral-600 transition hover:bg-primary hover:text-white active:scale-95"
                   onClick={handleIncrease}
+                  aria-label="Увеличить количество"
                 >
                   <Plus className="h-4 w-4" />
                 </button>
               </div>
-              <div className="flex gap-2">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  leftIcon={<BookmarkPlus className="h-4 w-4" />}
-                  onClick={() => onLike?.(book)}
-                >
-                  В избранное
-                </Button>
-                <Button
-                  size="sm"
-                  leftIcon={<ShoppingCart className="h-4 w-4" />}
-                  disabled={book.stock <= 0}
-                  onClick={() => onAddToCart?.(book, quantity)}
-                >
-                  В корзину
-                </Button>
-              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <Button
+                size="lg"
+                leftIcon={<ShoppingCart className="h-5 w-5" />}
+                disabled={book.stock <= 0}
+                onClick={() => onAddToCart?.(book, quantity)}
+                className="col-span-full shadow-md transition-transform active:scale-[0.98]"
+              >
+                {book.stock <= 0 ? 'Нет в наличии' : 'В корзину'}
+              </Button>
+              <Button
+                variant="secondary"
+                size="lg"
+                leftIcon={<BookmarkPlus className="h-5 w-5" />}
+                onClick={() => onLike?.(book)}
+                className="col-span-full transition-transform active:scale-[0.98]"
+              >
+                Избранное
+              </Button>
             </div>
           </div>
         </div>
 
         <div className="rounded-3xl bg-white p-6 shadow-card">
-          <h3 className="mb-4 text-lg font-semibold text-neutral-900">Похожие книги</h3>
+          <div className="mb-6 flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-neutral-900">Вам может понравиться</h3>
+              <p className="mt-1 text-xs text-neutral-500">Похожие книги по жанру и стилю</p>
+            </div>
+          </div>
           {similarLoading ? (
             <Loading message="Подбираем похожие книги..." />
           ) : similarError ? (
             <ErrorMessage description="Не удалось загрузить похожие книги." />
           ) : similarData?.length ? (
-            <RecommendationCarousel books={similarData} />
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4">
+              {similarData.slice(0, 8).map((similarBook) => (
+                <div
+                  key={similarBook.id}
+                  className="group flex flex-col rounded-xl bg-neutral-50 p-3 transition hover:bg-neutral-100 hover:shadow-md"
+                >
+                  <Link to={`/books/${similarBook.id}`} className="block">
+                    <div className="relative aspect-[2/3] overflow-hidden rounded-lg bg-neutral-200">
+                      {similarBook.cover_image_url ? (
+                        <img
+                          src={similarBook.cover_image_url}
+                          alt={similarBook.title}
+                          className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-xs text-neutral-400">
+                          Нет фото
+                        </div>
+                      )}
+                    </div>
+                    <h4 className="mt-2 line-clamp-2 text-xs font-semibold text-neutral-900 leading-tight">
+                      {similarBook.title}
+                    </h4>
+                    <p className="mt-0.5 line-clamp-1 text-xs text-neutral-500">
+                      {similarBook.author}
+                    </p>
+                  </Link>
+                  <div className="mt-2 flex items-center justify-between">
+                    <span className="text-sm font-bold text-neutral-900">
+                      {formatPrice(similarBook.price)}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => onAddToCartSimilar?.(similarBook)}
+                      className="rounded-lg bg-primary px-2 py-1 text-xs font-medium text-white transition hover:bg-primary-700 active:scale-95"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
           ) : (
-            <p className="text-sm text-neutral-500">
-              Пока нет похожих книг для отображения.
-            </p>
+            <div className="rounded-xl border border-dashed border-neutral-200 bg-neutral-50 p-8 text-center">
+              <p className="text-sm text-neutral-500">
+                Пока нет похожих книг для отображения.
+              </p>
+            </div>
           )}
         </div>
       </div>

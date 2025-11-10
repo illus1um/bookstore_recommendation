@@ -22,6 +22,7 @@ class OrderCreateRequest(BaseModel):
     """Запрос на создание заказа."""
 
     shipping_address: ShippingAddressSchema
+    payment_method: str = Field(default="card", description="Способ оплаты: card или cash")
 
 
 class OrderItemResponse(BaseModel):
@@ -48,6 +49,7 @@ class OrderResponse(BaseModel):
     total_amount: float
     status: OrderStatus
     shipping_address: ShippingAddressSchema
+    payment_method: str = "card"
     created_at: datetime
     updated_at: datetime
 

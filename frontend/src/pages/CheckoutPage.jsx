@@ -56,7 +56,7 @@ const CheckoutPage = () => {
 
   const onSubmit = async (values) => {
     try {
-      await createOrder.mutateAsync({
+      const orderPayload = {
         shipping_address: {
           address: values.address,
           city: values.city,
@@ -64,12 +64,35 @@ const CheckoutPage = () => {
           country: values.country,
         },
         payment_method: values.payment_method,
-      })
-      toast.success('Заказ успешно оформлен!')
+      }
+      
+      console.log('Отправка заказа:', orderPayload)
+      
+      const result = await createOrder.mutateAsync(orderPayload)
+      
+      console.log('Заказ создан:', result)
+      
+      // Сначала переходим на профиль, затем показываем уведомление
       resetCheckout()
-      navigate('/profile')
+      navigate('/profile', { replace: true })
+      
+      // Небольшая задержка для корректного отображения toast после перехода
+      setTimeout(() => {
+        toast.success('Заказ успешно оформлен!')
+      }, 100)
     } catch (error) {
-      toast.error('Не удалось оформить заказ')
+      console.error('Ошибка создания заказа:', error)
+      console.error('Детали ошибки:', error.response?.data)
+      
+      const errorMessage = error.response?.data?.detail || 'Не удалось оформить заказ'
+      
+      // Если корзина пуста, перенаправляем в каталог
+      if (errorMessage.includes('корзине нет товаров')) {
+        toast.error('Корзина пуста. Добавьте товары перед оформлением заказа.')
+        navigate('/catalog', { replace: true })
+      } else {
+        toast.error(errorMessage)
+      }
     }
   }
 

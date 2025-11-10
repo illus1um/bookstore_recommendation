@@ -52,17 +52,18 @@ const RecommendationCarousel = ({
       </div>
       <div
         ref={scrollRef}
-        className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4"
+        className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-4 scrollbar-hide"
       >
         {books.map((book) => (
           <div
             key={book.id}
-            className="min-w-[240px] snap-center lg:min-w-[260px]"
+            className="min-w-[180px] snap-center sm:min-w-[200px] lg:min-w-[220px]"
           >
             <BookCard 
               book={book} 
               onAddToCart={onAddToCart}
               onToggleFavorite={onToggleFavorite}
+              compact={true}
             />
           </div>
         ))}

@@ -30,16 +30,23 @@ async def create_interaction(
     Raises:
         HTTPException: Если книга не найдена
     """
-    # Проверяем, что книга существует
-    book = await Book.get(interaction_data.book_id)
-    if not book:
+    # Проверяем, что книга существует (мягкая проверка для VIEW)
+    book = None
+    try:
+        book = await Book.get(interaction_data.book_id)
+    except Exception as e:
+        # Логируем ошибку для отладки
+        print(f"Ошибка при поиске книги {interaction_data.book_id}: {e}")
+    
+    # Для критичных действий (не VIEW) требуем существование книги
+    if not book and interaction_data.interaction_type != InteractionType.VIEW:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Книга не найдена"
         )
     
     # Если это review, обновляем средний рейтинг книги
-    if interaction_data.interaction_type == InteractionType.REVIEW:
+    if book and interaction_data.interaction_type == InteractionType.REVIEW:
         rating = interaction_data.metadata.get("rating")
         if rating and isinstance(rating, (int, float)) and 1 <= rating <= 5:
             # Получаем все рейтинги для этой книги

@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import Button from '../common/Button'
@@ -12,6 +12,7 @@ const loginSchema = z.object({
 })
 
 const LoginForm = () => {
+  const navigate = useNavigate()
   const { login, loginStatus } = useAuth()
   const {
     register,
@@ -26,7 +27,12 @@ const LoginForm = () => {
   })
 
   const onSubmit = async (values) => {
-    await login(values)
+    try {
+      await login(values)
+      navigate('/')
+    } catch (error) {
+      // Ошибка уже обработана в useAuth
+    }
   }
 
   return (

@@ -17,6 +17,7 @@ from app.schemas.order import (
     OrderListResponse,
     OrderResponse,
     OrderItemResponse,
+    ShippingAddressSchema,
 )
 
 router = APIRouter()
@@ -40,7 +41,13 @@ def _order_to_response(order: Order) -> OrderResponse:
         ],
         total_amount=order.total_amount,
         status=order.status,
-        shipping_address=order.shipping_address,
+        shipping_address=ShippingAddressSchema(
+            address=order.shipping_address.address,
+            city=order.shipping_address.city,
+            postal_code=order.shipping_address.postal_code,
+            country=order.shipping_address.country,
+        ),
+        payment_method=order.payment_method,
         created_at=order.created_at,
         updated_at=order.updated_at,
     )
@@ -65,9 +72,13 @@ async def create_order(
     payload: OrderCreateRequest, current_user: User = Depends(get_current_active_user)
 ):
     """Создаёт заказ на основе текущей корзины пользователя."""
+    
+    print(f"Получен запрос на создание заказа от пользователя {current_user.id}")
+    print(f"Payload: {payload}")
 
     cart = await Cart.find_one(Cart.user_id == current_user.id)
     if not cart or not cart.items:
+        print(f"Корзина пользователя {current_user.id} пуста")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="В корзине нет товаров",
@@ -118,6 +129,7 @@ async def create_order(
         total_amount=round(total_amount, 2),
         status=OrderStatus.PENDING,
         shipping_address=ShippingAddress(**payload.shipping_address.model_dump()),
+        payment_method=payload.payment_method,
         created_at=now,
         updated_at=now,
     )

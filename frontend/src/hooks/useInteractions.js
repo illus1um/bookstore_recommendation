@@ -34,27 +34,46 @@ export const useInteractions = ({ fetch = false, userId: overrideUserId } = {}) 
         queryClient.invalidateQueries({ queryKey: interactionKeys.user(userId) })
       }
     },
-    onError: () => {
-      toast.error('Не удалось сохранить взаимодействие.')
+    onError: (error) => {
+      // Показываем ошибку только для явных действий пользователя (не для автоматического VIEW)
+      console.error('Ошибка сохранения взаимодействия:', error)
     },
   })
 
   const createInteraction = useCallback(
-    (interaction) =>
-      mutation.mutateAsync({
-        ...interaction,
-        metadata: interaction.metadata ?? {},
-      }),
+    async (interaction, options = {}) => {
+      try {
+        return await mutation.mutateAsync({
+          ...interaction,
+          metadata: interaction.metadata ?? {},
+        })
+      } catch (error) {
+        // Показываем toast только если это не скрытое действие
+        if (!options.silent) {
+          toast.error('Не удалось сохранить взаимодействие.')
+        }
+        throw error
+      }
+    },
     [mutation],
   )
 
   const trackView = useCallback(
-    (bookId) => {
+    async (bookId) => {
       if (!bookId) return
-      createInteraction({
-        book_id: bookId,
-        interaction_type: INTERACTION_TYPES.VIEW,
-      })
+      try {
+        // Тихое отслеживание просмотров без показа ошибок пользователю
+        await createInteraction(
+          {
+            book_id: bookId,
+            interaction_type: INTERACTION_TYPES.VIEW,
+          },
+          { silent: true }
+        )
+      } catch (error) {
+        // Игнорируем ошибки для просмотров
+        console.debug('Не удалось записать просмотр:', error)
+      }
     },
     [createInteraction],
   )
@@ -73,7 +92,20 @@ export const useTrackView = (bookId, enabled = true) => {
 
   useEffect(() => {
     if (!enabled || !bookId) return
-    trackView(bookId)
+    
+    // Защита от повторных вызовов: отслеживаем только один раз
+    let cancelled = false
+    
+    const track = async () => {
+      if (cancelled) return
+      await trackView(bookId)
+    }
+    
+    track()
+    
+    return () => {
+      cancelled = true
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookId, enabled])
 }

@@ -27,3 +27,13 @@ body {
 .section {
   @apply py-12 md:py-16;
 }
+
+/* Скрытие scrollbar для каруселей */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

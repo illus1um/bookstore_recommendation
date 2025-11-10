@@ -46,6 +46,7 @@ class Order(Document):
     total_amount: float = Field(..., ge=0)
     status: OrderStatus = Field(default=OrderStatus.PENDING)
     shipping_address: ShippingAddress
+    payment_method: str = Field(default="card")
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 

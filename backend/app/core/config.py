@@ -26,13 +26,22 @@ class Settings(BaseSettings):
     DATABASE_NAME: str = Field(default="bookstore_db")
     
     # Security
-    SECRET_KEY: str = Field(...)
+    SECRET_KEY: str = Field(
+        default="dev-secret-key-change-this-in-production-minimum-32-characters-long-please"
+    )
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
     # CORS
     BACKEND_CORS_ORIGINS: List[str] = Field(
-        default=["http://localhost:3000", "http://localhost:5173"]
+        default=[
+            "http://localhost:3000",
+            "http://localhost:5173",
+            "http://localhost:5174",
+            "http://127.0.0.1:3000",
+            "http://127.0.0.1:5173",
+            "http://127.0.0.1:5174",
+        ]
     )
     
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")

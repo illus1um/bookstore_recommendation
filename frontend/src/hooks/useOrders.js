@@ -13,9 +13,10 @@ export const useOrders = (params) =>
     queryKey: ordersKeys.list(params),
     queryFn: async () => {
       const response = await ordersApi.getOrders(params)
-      return response.data
+      // Backend возвращает OrderListResponse с полем items
+      return response.data.items || []
     },
-    keepPreviousData: true,
+    staleTime: 1000 * 30, // 30 секунд
   })
 
 export const useOrder = (orderId) =>
@@ -32,13 +33,22 @@ export const useCreateOrder = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (payload) => ordersApi.createOrder(payload),
-    onSuccess: (response) => {
-      toast.success('Заказ успешно оформлен')
-      queryClient.invalidateQueries({ queryKey: ordersKeys.root })
+    mutationFn: async (payload) => {
+      console.log('useCreateOrder: отправка запроса с payload:', payload)
+      const response = await ordersApi.createOrder(payload)
+      console.log('useCreateOrder: ответ сервера:', response)
       return response.data
     },
-    onError: () => toast.error('Не удалось оформить заказ'),
+    onSuccess: (data) => {
+      console.log('useCreateOrder: успех, данные:', data)
+      // Инвалидируем кэш заказов и корзины
+      queryClient.invalidateQueries({ queryKey: ordersKeys.root })
+      queryClient.invalidateQueries({ queryKey: ['cart'] })
+    },
+    onError: (error) => {
+      console.error('useCreateOrder: ошибка:', error)
+      console.error('useCreateOrder: детали:', error.response?.data)
+    },
   })
 }
 

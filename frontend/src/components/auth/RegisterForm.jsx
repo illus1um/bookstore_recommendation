@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import Button from '../common/Button'
@@ -22,7 +22,8 @@ const registerSchema = z
   })
 
 const RegisterForm = () => {
-  const { register: registerUser, registerStatus } = useAuth()
+  const navigate = useNavigate()
+  const { register: registerUser, login, registerStatus } = useAuth()
   const {
     register,
     handleSubmit,
@@ -54,14 +55,21 @@ const RegisterForm = () => {
   }
 
   const onSubmit = async (values) => {
-    const payload = {
-      email: values.email,
-      username: values.username,
-      password: values.password,
-      full_name: values.full_name,
-      favorite_genres: values.favorite_genres,
+    try {
+      const payload = {
+        email: values.email,
+        username: values.username,
+        password: values.password,
+        full_name: values.full_name,
+        favorite_genres: values.favorite_genres,
+      }
+      await registerUser(payload)
+      // Автоматически логинимся после успешной регистрации
+      await login({ email: values.email, password: values.password })
+      navigate('/')
+    } catch (error) {
+      // Ошибка уже обработана в useAuth
     }
-    await registerUser(payload)
   }
 
   return (

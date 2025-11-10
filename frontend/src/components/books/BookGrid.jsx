@@ -10,6 +10,7 @@ const BookGrid = ({
   onAddToCart,
   onToggleFavorite,
   favorites = [],
+  compact = true,
 }) => {
   if (isLoading) {
     return <Loading message="Загружаем книги..." />
@@ -28,7 +29,10 @@ const BookGrid = ({
   }
 
   return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className={compact 
+      ? "grid gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+      : "grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+    }>
       {books.map((book) => (
         <BookCard
           key={book.id}
@@ -36,6 +40,7 @@ const BookGrid = ({
           onAddToCart={onAddToCart}
           onToggleFavorite={onToggleFavorite}
           isFavorite={favorites.includes(book.id)}
+          compact={compact}
         />
       ))}
     </div>

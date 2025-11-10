@@ -8,6 +8,7 @@ import { useTrackView, useInteractions } from '../hooks/useInteractions'
 import { INTERACTION_TYPES } from '../utils/constants'
 import { useAuthStore } from '../store/authStore'
 import { useCart } from '../hooks/useCart'
+import useUIStore from '../store/uiStore'
 
 const BookDetailPage = () => {
   const { bookId } = useParams()
@@ -16,6 +17,7 @@ const BookDetailPage = () => {
   const { data: book, isLoading, isError } = useBook(bookId)
   const { createInteraction } = useInteractions()
   const { addToCart } = useCart()
+  const { openCart } = useUIStore()
 
   useTrackView(bookId, Boolean(isAuthenticated && bookId))
 
@@ -30,7 +32,12 @@ const BookDetailPage = () => {
 
   const handleAddToCart = async (item, quantity) => {
     if (!requireAuth()) return
-    await addToCart({ book_id: item.id, quantity })
+    try {
+      await addToCart({ book_id: item.id, quantity })
+      openCart()
+    } catch (error) {
+      console.error('Ошибка добавления в корзину:', error)
+    }
   }
 
   const handleLike = async (item) => {
@@ -46,9 +53,30 @@ const BookDetailPage = () => {
   if (isError || !book)
     return <ErrorMessage description="Не удалось загрузить информацию о книге." />
 
+  const handleAddToCartSimilar = async (book) => {
+    if (!requireAuth()) return
+    try {
+      await addToCart({ book_id: book.id, quantity: 1 })
+      openCart()
+    } catch (error) {
+      console.error('Ошибка добавления в корзину:', error)
+    }
+  }
+
+  const handleToggleFavoriteSimilar = (book) => {
+    if (!requireAuth()) return
+    toast.info('Функция избранного в разработке')
+  }
+
   return (
     <div className="container mx-auto px-4 py-12 md:py-16">
-      <BookDetail book={book} onAddToCart={handleAddToCart} onLike={handleLike} />
+      <BookDetail 
+        book={book} 
+        onAddToCart={handleAddToCart} 
+        onLike={handleLike}
+        onAddToCartSimilar={handleAddToCartSimilar}
+        onToggleFavoriteSimilar={handleToggleFavoriteSimilar}
+      />
     </div>
   )
 }

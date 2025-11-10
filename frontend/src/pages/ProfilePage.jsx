@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { toast } from 'react-hot-toast'
@@ -10,7 +11,7 @@ import { useAuth } from '../hooks/useAuth'
 import { useInteractions } from '../hooks/useInteractions'
 import { usePersonalRecommendations } from '../hooks/useRecommendations'
 import { useOrders } from '../hooks/useOrders'
-import RecommendationCarousel from '../components/recommendations/RecommendationCarousel'
+import { useCartActions } from '../hooks/useCartActions'
 import usersApi from '../api/users'
 import { GENRES } from '../utils/constants'
 import { formatDate, formatPrice, getInitials } from '../utils/helpers'
@@ -18,6 +19,7 @@ import { formatDate, formatPrice, getInitials } from '../utils/helpers'
 const ProfilePage = () => {
   const { user, updateUser } = useAuth()
   const { isLoading } = useInteractions({ fetch: true })
+  const { handleAddToCart } = useCartActions()
 
   const userId = user?.id
 
@@ -196,49 +198,183 @@ const ProfilePage = () => {
             </form>
           </Card>
 
-          <Card header={<h3 className="text-lg font-semibold">Мои заказы</h3>}>
+          <Card
+            header={
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold">Мои заказы</h3>
+                  <p className="mt-1 text-xs text-neutral-500">История ваших покупок</p>
+                </div>
+                {ordersData?.length > 0 && (
+                  <Link to="/orders" className="text-sm text-primary hover:underline">
+                    Все заказы
+                  </Link>
+                )}
+              </div>
+            }
+          >
             {ordersLoading ? (
               <Loading message="Загружаем заказы..." />
             ) : ordersError ? (
               <ErrorMessage description="Не удалось загрузить заказы." />
             ) : ordersData?.length ? (
-              <ul className="divide-y divide-neutral-100">
+              <div className="space-y-3">
                 {ordersData.slice(0, 5).map((order) => (
-                  <li key={order.id} className="flex items-center justify-between py-3">
-                    <div>
-                      <p className="text-sm font-medium text-neutral-800">
-                        Заказ #{order.id.slice(0, 8)}
-                      </p>
-                      <p className="text-xs text-neutral-500">
-                        {formatDate(order.created_at)} • {order.status}
-                      </p>
+                  <div
+                    key={order.id}
+                    className="group rounded-xl border border-neutral-100 bg-white p-4 transition hover:border-primary hover:shadow-md"
+                  >
+                    <div className="flex items-start justify-between border-b border-neutral-100 pb-3">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-semibold text-neutral-900">
+                            Заказ #{order.id.slice(0, 8)}
+                          </p>
+                          <span
+                            className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                              order.status === 'pending'
+                                ? 'bg-amber-100 text-amber-700'
+                                : order.status === 'confirmed'
+                                ? 'bg-blue-100 text-blue-700'
+                                : order.status === 'shipped'
+                                ? 'bg-purple-100 text-purple-700'
+                                : order.status === 'delivered'
+                                ? 'bg-green-100 text-green-700'
+                                : 'bg-neutral-100 text-neutral-700'
+                            }`}
+                          >
+                            {order.status === 'pending'
+                              ? 'В обработке'
+                              : order.status === 'confirmed'
+                              ? 'Подтверждён'
+                              : order.status === 'shipped'
+                              ? 'Отправлен'
+                              : order.status === 'delivered'
+                              ? 'Доставлен'
+                              : 'Отменён'}
+                          </span>
+                        </div>
+                        <p className="mt-1 text-xs text-neutral-500">
+                          {formatDate(order.created_at)}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-base font-bold text-neutral-900">
+                          {formatPrice(order.total_amount)}
+                        </p>
+                        <p className="text-xs text-neutral-500">
+                          {order.items.length} {order.items.length === 1 ? 'товар' : order.items.length < 5 ? 'товара' : 'товаров'}
+                        </p>
+                      </div>
                     </div>
-                    <span className="text-sm font-semibold text-neutral-700">
-                      {formatPrice(order.total_price)}
-                    </span>
-                  </li>
+                    {order.items?.length > 0 && (
+                      <div className="mt-3 space-y-2">
+                        {order.items.slice(0, 3).map((item, idx) => (
+                          <div key={idx} className="flex items-start justify-between text-xs">
+                            <div className="flex-1">
+                              <p className="font-medium text-neutral-800 line-clamp-1">
+                                {item.title}
+                              </p>
+                              <p className="text-neutral-500">
+                                {item.author} • {item.quantity} шт.
+                              </p>
+                            </div>
+                            <span className="ml-2 font-semibold text-neutral-700">
+                              {formatPrice(item.price_at_purchase * item.quantity)}
+                            </span>
+                          </div>
+                        ))}
+                        {order.items.length > 3 && (
+                          <p className="text-xs text-neutral-500">
+                            + ещё {order.items.length - 3} {order.items.length - 3 === 1 ? 'товар' : 'товара'}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 ))}
-              </ul>
+              </div>
             ) : (
-              <p className="text-sm text-neutral-500">
-                У вас пока нет заказов. Начните с просмотра каталога!
-              </p>
+              <div className="rounded-xl border border-dashed border-neutral-200 bg-neutral-50 p-8 text-center">
+                <p className="text-sm text-neutral-500">
+                  У вас пока нет заказов. Начните с просмотра каталога!
+                </p>
+                <Link to="/catalog">
+                  <Button variant="secondary" size="sm" className="mt-4">
+                    Перейти в каталог
+                  </Button>
+                </Link>
+              </div>
             )}
           </Card>
 
           <Card
-            header={<h3 className="text-lg font-semibold">Рекомендовано для вас</h3>}
+            header={
+              <div>
+                <h3 className="text-lg font-semibold">Рекомендовано для вас</h3>
+                <p className="mt-1 text-xs text-neutral-500">На основе ваших интересов</p>
+              </div>
+            }
           >
             {recsLoading ? (
               <Loading message="Подбираем рекомендации..." />
             ) : recsError ? (
               <ErrorMessage description="Не удалось загрузить рекомендации." />
             ) : personalRecs?.length ? (
-              <RecommendationCarousel books={personalRecs} />
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5">
+                {personalRecs.slice(0, 10).map((book) => (
+                  <div
+                    key={book.id}
+                    className="group flex flex-col rounded-xl bg-neutral-50 p-3 transition hover:bg-neutral-100 hover:shadow-md"
+                  >
+                    <Link to={`/books/${book.id}`} className="block">
+                      <div className="relative aspect-[2/3] overflow-hidden rounded-lg bg-neutral-200">
+                        {book.cover_image_url ? (
+                          <img
+                            src={book.cover_image_url}
+                            alt={book.title}
+                            className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center text-xs text-neutral-400">
+                            Нет фото
+                          </div>
+                        )}
+                      </div>
+                      <h4 className="mt-2 line-clamp-2 text-xs font-semibold text-neutral-900 leading-tight">
+                        {book.title}
+                      </h4>
+                      <p className="mt-0.5 line-clamp-1 text-xs text-neutral-500">
+                        {book.author}
+                      </p>
+                    </Link>
+                    <div className="mt-2 flex items-center justify-between">
+                      <span className="text-sm font-bold text-neutral-900">
+                        {formatPrice(book.price)}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleAddToCart(book)}
+                        className="rounded-lg bg-primary px-2 py-1 text-xs font-medium text-white transition hover:bg-primary-700 active:scale-95"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             ) : (
-              <p className="text-sm text-neutral-500">
-                Взаимодействуйте с каталогом, чтобы получить персональные рекомендации.
-              </p>
+              <div className="rounded-xl border border-dashed border-neutral-200 bg-neutral-50 p-8 text-center">
+                <p className="text-sm text-neutral-500">
+                  Взаимодействуйте с каталогом, чтобы получить персональные рекомендации.
+                </p>
+                <Link to="/catalog">
+                  <Button variant="secondary" size="sm" className="mt-4">
+                    Перейти в каталог
+                  </Button>
+                </Link>
+              </div>
             )}
           </Card>
         </div>
