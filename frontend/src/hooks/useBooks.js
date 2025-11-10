@@ -75,6 +75,7 @@ export const useBookMutations = () => {
     mutationFn: ({ bookId, data }) => booksApi.updateBook(bookId, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: booksKeys.details(variables.bookId) })
+      queryClient.invalidateQueries({ queryKey: booksKeys.all })
     },
   })
 

@@ -5,16 +5,17 @@ import SearchBar from '../books/SearchBar'
 import { useAuthStore } from '../../store/authStore'
 import { useAuth } from '../../hooks/useAuth'
 
-const navItems = [
-  { to: '/', label: 'Главная' },
-  { to: '/catalog', label: 'Каталог' },
-  { to: '/profile', label: 'Профиль', protected: true },
-]
-
 const Header = () => {
   const navigate = useNavigate()
   const { isAuthenticated, user } = useAuthStore()
   const { logout, logoutStatus } = useAuth()
+
+  const navItems = [
+    { to: '/', label: 'Главная' },
+    { to: '/catalog', label: 'Каталог' },
+    { to: '/profile', label: 'Профиль', protected: true },
+    { to: '/admin', label: 'Админ', admin: true },
+  ]
 
   const handleLogout = async () => {
     await logout()
@@ -36,6 +37,7 @@ const Header = () => {
           <nav className="hidden items-center gap-4 md:flex">
             {navItems.map((item) => {
               if (item.protected && !isAuthenticated) return null
+              if (item.admin && !user?.is_admin) return null
               return (
                 <NavLink
                   key={item.to}

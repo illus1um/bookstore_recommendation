@@ -8,6 +8,8 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import NotFoundPage from './pages/NotFoundPage'
 import ProtectedRoute from './components/auth/ProtectedRoute'
+import AdminDashboardPage from './pages/AdminDashboardPage'
+import AdminRoute from './components/auth/AdminRoute'
 
 const App = () => (
   <Routes>
@@ -21,6 +23,14 @@ const App = () => (
           <ProtectedRoute>
             <ProfilePage />
           </ProtectedRoute>
+        }
+      />
+      <Route
+        path="admin"
+        element={
+          <AdminRoute>
+            <AdminDashboardPage />
+          </AdminRoute>
         }
       />
       <Route path="login" element={<LoginPage />} />

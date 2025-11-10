@@ -16,10 +16,13 @@ from app.api.deps import get_current_user, get_current_admin_user
 router = APIRouter()
 
 
+MAX_BOOKS_LIMIT = 500
+
+
 @router.get("/", response_model=List[BookSchema])
 async def get_books(
     skip: int = Query(0, ge=0),
-    limit: int = Query(20, ge=1, le=100),
+    limit: int = Query(20, ge=1, le=MAX_BOOKS_LIMIT),
     genre: Optional[str] = None,
     author: Optional[str] = None,
     min_price: Optional[float] = Query(None, ge=0),
