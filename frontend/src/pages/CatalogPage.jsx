@@ -45,7 +45,7 @@ const CatalogPage = () => {
   const params = useMemo(() => {
     const payload = {
       page,
-      limit: 12,
+      limit: 20,
       sort_by: filters.sort_by,
     }
 

@@ -1,4 +1,4 @@
-import { Heart, Star } from 'lucide-react'
+import { Star } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import Button from '../common/Button'
 import { formatPrice } from '../../utils/helpers'
@@ -36,23 +36,7 @@ const BookCard = ({
       )}
       </div>
     </Link>
-    
-      <button
-        type="button"
-      onClick={(e) => {
-        e.stopPropagation()
-        onToggleFavorite?.(book)
-      }}
-        className={clsx(
-        'absolute flex items-center justify-center rounded-full border border-white/80 bg-white/90 text-neutral-500 shadow-sm transition hover:scale-110',
-        compact ? 'right-2 top-2 h-7 w-7' : 'right-3 top-3 h-8 w-8',
-          isFavorite && 'text-red-500',
-        )}
-        aria-label="Добавить в избранное"
-      >
-      <Heart className={clsx(compact ? 'h-3.5 w-3.5' : 'h-4 w-4', isFavorite && 'fill-current')} />
-      </button>
-    
+  
     <div className={clsx('flex flex-1 flex-col', compact ? 'mt-2' : 'mt-3')}>
       <Link to={`/books/${book.id}`}>
         <span className={clsx(

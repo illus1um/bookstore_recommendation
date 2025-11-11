@@ -102,34 +102,34 @@ const CheckoutPage = () => {
   const renderStepContent = () => {
     switch (checkoutStep) {
       case 1:
-        return (
+  return (
           <div className="space-y-4">
+          <Input
+            label="Адрес"
+            placeholder="Улица, дом, квартира"
+            error={errors.address?.message}
+            {...register('address', { required: 'Укажите адрес доставки' })}
+          />
+          <Input
+            label="Город"
+            placeholder="Москва"
+            error={errors.city?.message}
+            {...register('city', { required: 'Укажите город' })}
+          />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Input
-              label="Адрес"
-              placeholder="Улица, дом, квартира"
-              error={errors.address?.message}
-              {...register('address', { required: 'Укажите адрес доставки' })}
+              label="Почтовый индекс"
+              placeholder="123456"
+              error={errors.postal_code?.message}
+              {...register('postal_code', { required: 'Укажите индекс' })}
             />
             <Input
-              label="Город"
-              placeholder="Москва"
-              error={errors.city?.message}
-              {...register('city', { required: 'Укажите город' })}
+              label="Страна"
+              placeholder="Россия"
+              error={errors.country?.message}
+              {...register('country', { required: 'Укажите страну' })}
             />
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <Input
-                label="Почтовый индекс"
-                placeholder="123456"
-                error={errors.postal_code?.message}
-                {...register('postal_code', { required: 'Укажите индекс' })}
-              />
-              <Input
-                label="Страна"
-                placeholder="Россия"
-                error={errors.country?.message}
-                {...register('country', { required: 'Укажите страну' })}
-              />
-            </div>
+          </div>
             <Button
               type="button"
               size="lg"
@@ -228,15 +228,15 @@ const CheckoutPage = () => {
               >
                 Назад
               </Button>
-              <Button
-                type="submit"
-                size="lg"
-                className="w-full"
+          <Button
+            type="submit"
+            size="lg"
+            className="w-full"
                 isLoading={isSubmitting || createOrder.isPending}
                 leftIcon={<CheckCircle2 className="h-4 w-4" />}
-              >
-                Подтвердить заказ
-              </Button>
+          >
+            Подтвердить заказ
+          </Button>
             </div>
           </div>
         )

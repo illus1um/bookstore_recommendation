@@ -132,7 +132,7 @@ const RecommendationDiscovery = ({ genres = [] }) => {
                 onClick={() => setActiveStrategy(strategy.id)}
                 disabled={disabled}
                 className={clsx(
-                  'rounded-full border px-4 py-2 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+                  'rounded-full border px-4 py-2 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary shrink-0',
                   activeStrategy === strategy.id
                     ? 'border-primary bg-primary text-white shadow-sm'
                     : 'border-neutral-200 bg-white text-neutral-600 hover:border-primary hover:text-primary',
@@ -156,7 +156,7 @@ const RecommendationDiscovery = ({ genres = [] }) => {
               type="button"
               onClick={() => setSelectedGenre(genre)}
               className={clsx(
-                'rounded-full border px-3 py-1 text-xs font-medium uppercase tracking-wide transition',
+                'rounded-full border px-3 py-1 text-xs font-medium uppercase tracking-wide transition shrink-0',
                 selectedGenre === genre
                   ? 'border-primary bg-primary/10 text-primary'
                   : 'border-neutral-200 text-neutral-500 hover:border-primary hover:text-primary',
