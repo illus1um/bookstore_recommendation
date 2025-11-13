@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import math
-from collections import defaultdict
+from collections import Counter, defaultdict
 from datetime import datetime, timedelta
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
@@ -37,6 +37,14 @@ CF_INTERACTION_TYPES: Tuple[InteractionType, ...] = (
 
 # Ограничение числа кандидатов для content-based расчётов
 MAX_CONTENT_CANDIDATES = 250
+
+# Веса предпочтений пользователя
+PREFERENCE_WEIGHTS = {
+    "genre_bonus": 1.15,   # множитель за совпадение жанра
+    "author_bonus": 1.3,   # множитель за совпадение автора
+    "new_user_genre_ratio": 0.6,  # доля рекомендаций жанровых в cold-start
+    "new_user_author_ratio": 0.25,  # доля рекомендаций по авторам
+}
 
 
 class RecommendationEngine:
@@ -82,7 +90,14 @@ class RecommendationEngine:
 
         # Если совсем нет взаимодействий - cold start
         if not target_interactions:
+            await self._ensure_user_preferences(user, target_interactions)
             return await self.get_recommendations_for_new_user(user_id=user_id, limit=limit)
+
+        favorite_genres, favorite_authors = await self._ensure_user_preferences(
+            user, target_interactions
+        )
+        genre_bonus = PREFERENCE_WEIGHTS.get("genre_bonus", 1.0)
+        author_bonus = PREFERENCE_WEIGHTS.get("author_bonus", 1.0)
 
         # Строим матрицу пользователь-книга для всех релевантных взаимодействий
         all_interactions = await Interaction.find(
@@ -134,8 +149,18 @@ class RecommendationEngine:
                 interaction_strength = other_vector[book_idx]
                 rating = book.average_rating or 4.0
                 popularity_penalty = 1 + math.log(1 + book_popularity.get(book_id, 1))
+                preference_multiplier = 1.0
+                if favorite_genres and book.genre in favorite_genres:
+                    preference_multiplier *= genre_bonus
+                if favorite_authors and book.author in favorite_authors:
+                    preference_multiplier *= author_bonus
 
-                score = (similarity * interaction_strength * rating) / popularity_penalty
+                score = (
+                    similarity
+                    * interaction_strength
+                    * rating
+                    * preference_multiplier
+                ) / popularity_penalty
                 candidate_scores[book_id] += score
 
         recommended = self._books_from_scores(candidate_scores, book_map, limit)
@@ -251,8 +276,13 @@ class RecommendationEngine:
         cutoff = self._now() - timedelta(days=days)
         query = Book.find(Book.created_at >= cutoff)
 
-        if user and user.favorite_genres:
-            query = query.find({"genre": {"$in": user.favorite_genres}})
+        if user:
+            favorite_genres, favorite_authors = await self._ensure_user_preferences(user)
+        else:
+            favorite_genres, favorite_authors = set(), set()
+
+        if favorite_genres:
+            query = query.find({"genre": {"$in": list(favorite_genres)}})
 
         books = await query.sort(-Book.created_at).limit(limit * 2).to_list()
 
@@ -265,6 +295,26 @@ class RecommendationEngine:
                 if str(book.id) not in existing:
                     books.append(book)
 
+        if favorite_genres or favorite_authors:
+            genre_bonus = PREFERENCE_WEIGHTS.get("genre_bonus", 1.0)
+            author_bonus = PREFERENCE_WEIGHTS.get("author_bonus", 1.0)
+
+            def preference_score(book: Book) -> float:
+                multiplier = 1.0
+                if favorite_genres and book.genre in favorite_genres:
+                    multiplier *= genre_bonus
+                if favorite_authors and book.author in favorite_authors:
+                    multiplier *= author_bonus
+                return multiplier
+
+            books.sort(
+                key=lambda book: (
+                    preference_score(book),
+                    book.created_at or datetime.min,
+                ),
+                reverse=True,
+            )
+
         return books[:limit]
 
     async def get_recommendations_for_new_user(
@@ -276,7 +326,11 @@ class RecommendationEngine:
         if not user:
             return await self.get_trending_books(limit=limit)
 
-        genre_quota = max(1, int(limit * 0.6))
+        favorite_genres, favorite_authors = await self._ensure_user_preferences(user)
+        genre_ratio = PREFERENCE_WEIGHTS.get("new_user_genre_ratio", 0.6)
+        author_ratio = PREFERENCE_WEIGHTS.get("new_user_author_ratio", 0.25)
+
+        genre_quota = max(1, int(limit * genre_ratio)) if favorite_genres else 0
         recommendations: List[Book] = []
         seen: set[str] = set()
 
@@ -286,9 +340,9 @@ class RecommendationEngine:
         ).to_list()
         seen.update(str(interaction.book_id) for interaction in purchased)
 
-        if user.favorite_genres:
+        if favorite_genres:
             preferred = await Book.find(
-                {"genre": {"$in": user.favorite_genres}}
+                {"genre": {"$in": list(favorite_genres)}}
             ).sort(-Book.average_rating).limit(genre_quota * 2).to_list()
 
             for book in preferred:
@@ -299,6 +353,26 @@ class RecommendationEngine:
                     break
 
         remaining = limit - len(recommendations)
+
+        if favorite_authors and remaining > 0:
+            author_quota = max(1, int(limit * author_ratio))
+            author_quota = min(author_quota, remaining)
+            author_candidates = await Book.find(
+                {"author": {"$in": list(favorite_authors)}}
+            ).sort(-Book.average_rating).limit(author_quota * 2).to_list()
+
+            added = 0
+            for book in author_candidates:
+                if str(book.id) in seen:
+                    continue
+                recommendations.append(book)
+                seen.add(str(book.id))
+                added += 1
+                if added >= author_quota or len(recommendations) >= limit:
+                    break
+
+        remaining = limit - len(recommendations)
+
         if remaining > 0:
             trending = await self.get_trending_books(limit=remaining)
             for book in trending:
@@ -439,6 +513,83 @@ class RecommendationEngine:
             if len(result) >= limit:
                 break
         return result
+
+    async def _ensure_user_preferences(
+        self,
+        user: User,
+        interactions: Optional[Sequence[Interaction]] = None,
+        top_n: int = 5,
+    ) -> Tuple[set[str], set[str]]:
+        """Гарантирует наличие предпочтений пользователя, при необходимости вычисляя их."""
+
+        genres = [genre for genre in (user.favorite_genres or []) if genre]
+        authors = [author for author in (user.favorite_authors or []) if author]
+
+        if genres and authors:
+            return set(genres), set(authors)
+
+        if interactions is None:
+            interactions = await Interaction.find(
+                {
+                    "user_id": user.id,
+                    "interaction_type": {"$in": [t.value for t in CF_INTERACTION_TYPES]},
+                }
+            ).to_list()
+
+        derived_genres: List[str] = []
+        derived_authors: List[str] = []
+        if interactions:
+            derived_genres, derived_authors = await self._derive_preferences_from_interactions(
+                interactions, top_n=top_n
+            )
+
+        updated = False
+        if not genres and derived_genres:
+            genres = derived_genres
+            updated = True
+        if not authors and derived_authors:
+            authors = derived_authors
+            updated = True
+
+        if updated:
+            user.favorite_genres = genres
+            user.favorite_authors = authors
+            await user.save()
+
+        return set(genres), set(authors)
+
+    async def _derive_preferences_from_interactions(
+        self, interactions: Sequence[Interaction], top_n: int = 5
+    ) -> Tuple[List[str], List[str]]:
+        """Строит списки любимых жанров и авторов на основе взаимодействий."""
+
+        if not interactions:
+            return [], []
+
+        book_ids = {interaction.book_id for interaction in interactions}
+        books = await Book.find({"_id": {"$in": list(book_ids)}}).to_list()
+        book_map = {book.id: book for book in books}
+
+        genre_counter: Counter[str] = Counter()
+        author_counter: Counter[str] = Counter()
+
+        for interaction in interactions:
+            book = book_map.get(interaction.book_id)
+            if not book:
+                continue
+
+            weight = self._interaction_weight(interaction)
+            if weight <= 0:
+                continue
+
+            if book.genre:
+                genre_counter[book.genre] += weight
+            if book.author:
+                author_counter[book.author] += weight
+
+        favorite_genres = [genre for genre, _ in genre_counter.most_common(top_n)]
+        favorite_authors = [author for author, _ in author_counter.most_common(top_n)]
+        return favorite_genres, favorite_authors
 
     def _recency_multiplier(self, now: datetime, timestamp: datetime) -> float:
         """Временной коэффициент: чем свежее взаимодействие, тем больше вес."""
