@@ -4,6 +4,7 @@ API endpoints для работы с книгами: список, поиск, �
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from beanie import PydanticObjectId
 
 from app.api.deps import get_current_admin_user, get_current_user
 from app.models.book import Book
@@ -286,6 +287,40 @@ async def get_book_filters():
         publication_years=sorted(filter(None, years)),
         price_range=price_range,
     )
+
+
+@router.get("/bulk", response_model=List[BookSchema])
+async def get_books_bulk(
+    ids: List[str] = Query(
+        ..., description="Список идентификаторов книг для выборки."
+    ),
+    current_user=Depends(get_current_user),
+):
+    """
+    Возвращает список книг по переданным идентификаторам.
+    """
+
+    if not ids:
+        return []
+
+    object_ids: List[PydanticObjectId] = []
+    for book_id in ids:
+        try:
+            object_ids.append(PydanticObjectId(book_id))
+        except Exception as err:  # pylint: disable=broad-except
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Некорректный идентификатор книги: {book_id}",
+            ) from err
+
+    books = await Book.find({"_id": {"$in": object_ids}}).to_list()
+    book_map = {str(book.id): book for book in books}
+
+    ordered_books = [
+        book_map[book_id] for book_id in ids if book_id in book_map
+    ]
+
+    return [BookSchema.model_validate(book) for book in ordered_books]
 
 
 @router.get("/{book_id}", response_model=BookSchema)

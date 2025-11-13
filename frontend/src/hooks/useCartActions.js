@@ -3,12 +3,14 @@ import { toast } from 'react-hot-toast'
 import { useCart } from './useCart'
 import { useAuthStore } from '../store/authStore'
 import useUIStore from '../store/uiStore'
+import { useFavorites } from './useInteractions'
 
 export const useCartActions = () => {
   const navigate = useNavigate()
   const { isAuthenticated } = useAuthStore()
   const { addToCart } = useCart()
   const { openCart } = useUIStore()
+  const { toggleFavorite, isFavorite } = useFavorites()
 
   const handleAddToCart = async (book, quantity = 1) => {
     if (!isAuthenticated) {
@@ -25,19 +27,19 @@ export const useCartActions = () => {
     }
   }
 
-  const handleToggleFavorite = (book) => {
+  const handleToggleFavorite = async (book) => {
     if (!isAuthenticated) {
       toast.error('Необходимо войти в аккаунт')
       navigate('/login')
       return
     }
-    // TODO: реализовать избранное
-    toast.info('Функция избранного в разработке')
+    await toggleFavorite(book.id)
   }
 
   return {
     handleAddToCart,
     handleToggleFavorite,
+    isFavorite,
   }
 }
 

@@ -1,4 +1,13 @@
 import { useMemo, useState } from 'react'
+import clsx from 'clsx'
+import {
+  Eye,
+  Heart,
+  ShoppingCart,
+  Trash2,
+  ShoppingBag,
+  MessageCircle,
+} from 'lucide-react'
 import Loading from '../common/Loading'
 import ErrorMessage from '../common/ErrorMessage'
 import Input from '../common/Input'
@@ -14,6 +23,33 @@ const INTERACTION_LABELS = {
   [INTERACTION_TYPES.REMOVE_FROM_CART]: 'Удаление из корзины',
   [INTERACTION_TYPES.PURCHASE]: 'Покупка',
   [INTERACTION_TYPES.REVIEW]: 'Отзыв',
+}
+
+const INTERACTION_META = {
+  [INTERACTION_TYPES.VIEW]: {
+    badge: 'bg-sky-100 text-sky-700',
+    icon: Eye,
+  },
+  [INTERACTION_TYPES.LIKE]: {
+    badge: 'bg-pink-100 text-pink-700',
+    icon: Heart,
+  },
+  [INTERACTION_TYPES.ADD_TO_CART]: {
+    badge: 'bg-emerald-100 text-emerald-700',
+    icon: ShoppingCart,
+  },
+  [INTERACTION_TYPES.REMOVE_FROM_CART]: {
+    badge: 'bg-amber-100 text-amber-700',
+    icon: Trash2,
+  },
+  [INTERACTION_TYPES.PURCHASE]: {
+    badge: 'bg-purple-100 text-purple-700',
+    icon: ShoppingBag,
+  },
+  [INTERACTION_TYPES.REVIEW]: {
+    badge: 'bg-indigo-100 text-indigo-700',
+    icon: MessageCircle,
+  },
 }
 
 const QuickFilter = ({ label, active, onClick }) => (
@@ -182,22 +218,25 @@ const AdminInteractionsTab = () => {
               </thead>
               <tbody className="divide-y divide-neutral-100">
                 {filteredItems.map((interaction) => (
-                  <tr key={interaction.id} className="hover:bg-neutral-50/70">
+                  <tr
+                    key={interaction.id}
+                    className="hover:bg-neutral-50/70"
+                  >
                     <td className="px-4 py-3 text-neutral-700">
-                      <div className="flex flex-col">
+                      <div className="flex flex-col gap-1">
                         <span className="font-medium text-neutral-900">
                           {interaction.user_full_name || '—'}
                         </span>
                         <span className="text-xs text-neutral-500">
                           {interaction.user_email || '—'}
                         </span>
-                        <span className="text-xs text-neutral-400">ID: {interaction.user_id}</span>
+                        <span className="text-xs text-neutral-400">
+                          ID: {interaction.user_id}
+                        </span>
                       </div>
                     </td>
                     <td className="px-4 py-3 text-neutral-700">
-                      <span className="font-medium text-neutral-900">
-                        {INTERACTION_LABELS[interaction.interaction_type] || interaction.interaction_type}
-                      </span>
+                      <TypeBadge type={interaction.interaction_type} />
                     </td>
                     <td className="px-4 py-3 text-neutral-700">
                       <div className="flex flex-col">
@@ -240,30 +279,78 @@ const MetadataPreview = ({ interaction }) => {
     const quantity = metadata.quantity ?? 1
     const price = metadata.price_at_purchase ?? 0
     return (
-      <span>
-        Кол-во: {quantity} • Сумма: {formatPrice(quantity * price)}
-      </span>
+      <div className="flex flex-wrap gap-1">
+        <MetadataChip tone="emerald">Кол-во: {quantity}</MetadataChip>
+        <MetadataChip tone="purple">Сумма: {formatPrice(quantity * price)}</MetadataChip>
+      </div>
     )
   }
 
   if (type === INTERACTION_TYPES.REVIEW && metadata.rating) {
     return (
-      <span>
-        Оценка: {metadata.rating}
-        {metadata.comment ? ` • "${metadata.comment}"` : ''}
-      </span>
+      <div className="flex flex-wrap gap-1">
+        <MetadataChip tone="indigo">Оценка: {metadata.rating}</MetadataChip>
+        {metadata.comment && (
+          <MetadataChip tone="neutral">“{metadata.comment}”</MetadataChip>
+        )}
+      </div>
     )
   }
 
   if (type === INTERACTION_TYPES.VIEW && metadata.duration) {
-    return <span>Просмотрено {metadata.duration} сек.</span>
+    return <MetadataChip tone="sky">Просмотрено {metadata.duration} сек.</MetadataChip>
   }
 
   if (metadata.comment) {
-    return <span>Комментарий: "{metadata.comment}"</span>
+    return <MetadataChip tone="neutral">Комментарий: “{metadata.comment}”</MetadataChip>
   }
 
-  return <span>{JSON.stringify(metadata)}</span>
+  return (
+    <div className="flex flex-wrap gap-1">
+      {Object.entries(metadata).map(([key, value]) => (
+        <MetadataChip key={key} tone="neutral">
+          {key}: {String(value)}
+        </MetadataChip>
+      ))}
+    </div>
+  )
+}
+
+const MetadataChip = ({ children, tone = 'neutral' }) => {
+  const colors = {
+    neutral: 'bg-neutral-100 text-neutral-600',
+    emerald: 'bg-emerald-100 text-emerald-700',
+    purple: 'bg-purple-100 text-purple-700',
+    indigo: 'bg-indigo-100 text-indigo-700',
+    sky: 'bg-sky-100 text-sky-700',
+  }
+
+  return (
+    <span
+      className={clsx(
+        'inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-medium',
+        colors[tone] ?? colors.neutral,
+      )}
+    >
+      {children}
+    </span>
+  )
+}
+
+const TypeBadge = ({ type }) => {
+  const meta = INTERACTION_META[type] ?? {}
+  const Icon = meta.icon ?? Eye
+  return (
+    <span
+      className={clsx(
+        'inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium',
+        meta.badge ?? 'bg-neutral-100 text-neutral-600',
+      )}
+    >
+      <Icon className="h-3.5 w-3.5" />
+      {INTERACTION_LABELS[type] ?? type}
+    </span>
+  )
 }
 
 export default AdminInteractionsTab

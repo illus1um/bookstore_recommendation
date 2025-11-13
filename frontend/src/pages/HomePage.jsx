@@ -20,7 +20,7 @@ const HomePage = () => {
     isFetching: isFetchingNewBooks,
   } = useNewBooks({ limit: 12 })
   const { data: filters } = useBookFilters()
-  const { handleAddToCart, handleToggleFavorite } = useCartActions()
+  const { handleAddToCart, handleToggleFavorite, isFavorite } = useCartActions()
 
   const genresToShow = (filters?.genres ?? []).slice(0, 6)
 
@@ -92,6 +92,7 @@ const HomePage = () => {
           genres={genresToShow} 
           onAddToCart={handleAddToCart}
           onToggleFavorite={handleToggleFavorite}
+          isFavorite={isFavorite}
         />
       </section>
 
@@ -99,6 +100,7 @@ const HomePage = () => {
         <TrendingBooks 
           onAddToCart={handleAddToCart}
           onToggleFavorite={handleToggleFavorite}
+          isFavorite={isFavorite}
         />
       </section>
 
@@ -137,6 +139,7 @@ const HomePage = () => {
             books={newBooks ?? []} 
             onAddToCart={handleAddToCart}
             onToggleFavorite={handleToggleFavorite}
+            isFavorite={isFavorite}
           />
         )}
       </section>

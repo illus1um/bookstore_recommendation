@@ -3,7 +3,7 @@ import Loading from '../common/Loading'
 import ErrorMessage from '../common/ErrorMessage'
 import { useTrendingBooks } from '../../hooks/useRecommendations'
 
-const TrendingBooks = ({ onAddToCart, onToggleFavorite }) => {
+const TrendingBooks = ({ onAddToCart, onToggleFavorite, isFavorite }) => {
   const { data, isLoading, isError } = useTrendingBooks()
 
   if (isLoading) return <Loading message="Популярные книги загружаются..." />
@@ -16,6 +16,7 @@ const TrendingBooks = ({ onAddToCart, onToggleFavorite }) => {
       subtitle="Самые просматриваемые и покупаемые книги на этой неделе"
       onAddToCart={onAddToCart}
       onToggleFavorite={onToggleFavorite}
+      isFavorite={isFavorite}
     />
   )
 }

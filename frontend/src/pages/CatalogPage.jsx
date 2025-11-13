@@ -9,7 +9,7 @@ import { useCartActions } from '../hooks/useCartActions'
 
 const CatalogPage = () => {
   const [searchParams, setSearchParams] = useSearchParams()
-  const { handleAddToCart, handleToggleFavorite } = useCartActions()
+  const { handleAddToCart, handleToggleFavorite, isFavorite } = useCartActions()
   
   // Парсим фильтры из URL
   const parseFiltersFromURL = useCallback((params) => {
@@ -186,6 +186,7 @@ const CatalogPage = () => {
                 isError={isError}
                 onAddToCart={handleAddToCart}
                 onToggleFavorite={handleToggleFavorite}
+                isFavorite={isFavorite}
               />
               {!isLoading && books.length === 0 && (
                 <div className="rounded-2xl border border-dashed border-neutral-200 bg-neutral-50 p-12 text-center">

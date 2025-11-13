@@ -1,4 +1,4 @@
-import { Star } from 'lucide-react'
+import { Star, Heart } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import Button from '../common/Button'
 import { formatPrice } from '../../utils/helpers'
@@ -33,6 +33,30 @@ const BookCard = ({
           <div className="flex h-full w-full items-center justify-center text-sm text-neutral-400">
           Нет изображения
         </div>
+      )}
+      {/* Иконка избранного */}
+      {onToggleFavorite && (
+        <button
+          onClick={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            onToggleFavorite(book)
+          }}
+          className={clsx(
+            'absolute right-2 top-2 z-10 flex items-center justify-center rounded-full p-1.5 shadow-md transition-all',
+            isFavorite
+              ? 'bg-red-500 text-white hover:bg-red-600'
+              : 'bg-white/90 text-neutral-400 hover:bg-white hover:text-red-500'
+          )}
+          aria-label={isFavorite ? 'Удалить из избранного' : 'Добавить в избранное'}
+        >
+          <Heart
+            className={clsx(
+              compact ? 'h-3.5 w-3.5' : 'h-4 w-4',
+              isFavorite && 'fill-current'
+            )}
+          />
+        </button>
       )}
       </div>
     </Link>

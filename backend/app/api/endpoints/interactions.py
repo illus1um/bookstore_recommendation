@@ -2,7 +2,8 @@
 API endpoints для работы с взаимодействиями.
 """
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
+from beanie import PydanticObjectId
 from app.models.interaction import Interaction, InteractionType
 from app.models.user import User
 from app.models.book import Book
@@ -144,9 +145,23 @@ async def admin_list_interactions(
     if interaction_type:
         query = query.find(Interaction.interaction_type == interaction_type)
     if user_id:
-        query = query.find(Interaction.user_id == user_id)
+        try:
+            user_object_id = PydanticObjectId(user_id)
+        except Exception as err:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Некорректный идентификатор пользователя",
+            ) from err
+        query = query.find(Interaction.user_id == user_object_id)
     if book_id:
-        query = query.find(Interaction.book_id == book_id)
+        try:
+            book_object_id = PydanticObjectId(book_id)
+        except Exception as err:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Некорректный идентификатор книги",
+            ) from err
+        query = query.find(Interaction.book_id == book_object_id)
 
     total = await query.count()
     interactions = (
@@ -184,4 +199,80 @@ async def admin_list_interactions(
         page=page,
         limit=limit,
     )
+
+
+@router.post("/toggle-like/{book_id}")
+async def toggle_like(
+    book_id: str,
+    current_user: User = Depends(get_current_active_user)
+):
+    """
+    Переключает лайк книги (добавляет или удаляет).
+    
+    Args:
+        book_id: ID книги
+        current_user: Текущий пользователь
+        
+    Returns:
+        Созданное взаимодействие (если лайк добавлен) или пустой ответ (если удален)
+    """
+    try:
+        book_object_id = PydanticObjectId(book_id)
+    except Exception as err:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Некорректный идентификатор книги",
+        ) from err
+    
+    # Проверяем существование книги
+    book = await Book.get(book_object_id)
+    if not book:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Книга не найдена"
+        )
+    
+    # Ищем существующий лайк
+    existing_like = await Interaction.find_one(
+        Interaction.user_id == current_user.id,
+        Interaction.book_id == book_object_id,
+        Interaction.interaction_type == InteractionType.LIKE
+    )
+    
+    if existing_like:
+        # Удаляем лайк
+        await existing_like.delete()
+        # Возвращаем пустой ответ с кодом 204 (No Content)
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
+    else:
+        # Создаем новый лайк
+        interaction = Interaction(
+            user_id=current_user.id,
+            book_id=book_object_id,
+            interaction_type=InteractionType.LIKE,
+            metadata={}
+        )
+        await interaction.insert()
+        return interaction
+
+
+@router.get("/likes", response_model=List[str])
+async def get_user_likes(
+    current_user: User = Depends(get_current_active_user)
+):
+    """
+    Получает список ID книг, которые пользователь лайкнул.
+    
+    Args:
+        current_user: Текущий пользователь
+        
+    Returns:
+        Список ID лайкнутых книг
+    """
+    likes = await Interaction.find(
+        Interaction.user_id == current_user.id,
+        Interaction.interaction_type == InteractionType.LIKE
+    ).to_list()
+    
+    return [str(like.book_id) for like in likes]
 

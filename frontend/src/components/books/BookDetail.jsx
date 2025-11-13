@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Star, ShoppingCart, BookmarkPlus, Minus, Plus } from 'lucide-react'
+import { Star, ShoppingCart, BookmarkPlus, BookmarkCheck, Minus, Plus } from 'lucide-react'
 import Button from '../common/Button'
 import Loading from '../common/Loading'
 import ErrorMessage from '../common/ErrorMessage'
@@ -20,7 +20,7 @@ const tabs = [
   { key: 'reviews', label: 'Отзывы' },
 ]
 
-const BookDetail = ({ book, onAddToCart, onLike, onAddToCartSimilar, onToggleFavoriteSimilar }) => {
+const BookDetail = ({ book, onAddToCart, onLike, isFavorite = false, onAddToCartSimilar, onToggleFavoriteSimilar }) => {
   const {
     data: similarData,
     isLoading: similarLoading,
@@ -156,13 +156,13 @@ const BookDetail = ({ book, onAddToCart, onLike, onAddToCartSimilar, onToggleFav
                 {book.stock <= 0 ? 'Нет в наличии' : 'В корзину'}
               </Button>
               <Button
-                variant="secondary"
+                variant={isFavorite ? "primary" : "secondary"}
                 size="md"
-                leftIcon={<BookmarkPlus className="h-4 w-4" />}
+                leftIcon={isFavorite ? <BookmarkCheck className="h-4 w-4" /> : <BookmarkPlus className="h-4 w-4" />}
                 onClick={() => onLike?.(book)}
                 className="col-span-full transition-transform active:scale-[0.98]"
               >
-                Избранное
+                {isFavorite ? 'В избранном' : 'В избранное'}
               </Button>
             </div>
           </div>

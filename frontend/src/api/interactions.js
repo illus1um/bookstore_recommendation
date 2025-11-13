@@ -8,6 +8,8 @@ export const interactionsApi = {
     axiosInstance.get(`${INTERACTIONS_BASE}/user/${userId}`),
   getAdminInteractions: (params = {}) =>
     axiosInstance.get(`${INTERACTIONS_BASE}/admin/list`, { params }),
+  toggleLike: (bookId) => axiosInstance.post(`${INTERACTIONS_BASE}/toggle-like/${bookId}`),
+  getUserLikes: () => axiosInstance.get(`${INTERACTIONS_BASE}/likes`),
 }
 
 export default interactionsApi

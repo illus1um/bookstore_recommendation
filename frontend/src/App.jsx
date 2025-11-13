@@ -4,6 +4,7 @@ import HomePage from './pages/HomePage'
 import CatalogPage from './pages/CatalogPage'
 import BookDetailPage from './pages/BookDetailPage'
 import ProfilePage from './pages/ProfilePage'
+import OrdersPage from './pages/OrdersPage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import NotFoundPage from './pages/NotFoundPage'
@@ -24,6 +25,14 @@ const App = () => (
         element={
           <ProtectedRoute>
             <ProfilePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="orders"
+        element={
+          <ProtectedRoute>
+            <OrdersPage />
           </ProtectedRoute>
         }
       />

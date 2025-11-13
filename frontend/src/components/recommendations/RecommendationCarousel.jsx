@@ -7,7 +7,8 @@ const RecommendationCarousel = ({
   title, 
   subtitle, 
   onAddToCart, 
-  onToggleFavorite 
+  onToggleFavorite,
+  isFavorite
 }) => {
   const scrollRef = useRef(null)
 
@@ -63,6 +64,7 @@ const RecommendationCarousel = ({
               book={book} 
               onAddToCart={onAddToCart}
               onToggleFavorite={onToggleFavorite}
+              isFavorite={isFavorite?.(book.id) || false}
               compact={true}
             />
           </div>

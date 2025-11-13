@@ -9,7 +9,7 @@ const BookGrid = ({
   errorMessage,
   onAddToCart,
   onToggleFavorite,
-  favorites = [],
+  isFavorite,
   compact = true,
 }) => {
   if (isLoading) {
@@ -39,7 +39,7 @@ const BookGrid = ({
           book={book}
           onAddToCart={onAddToCart}
           onToggleFavorite={onToggleFavorite}
-          isFavorite={favorites.includes(book.id)}
+          isFavorite={isFavorite?.(book.id) || false}
           compact={compact}
         />
       ))}

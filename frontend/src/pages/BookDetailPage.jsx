@@ -4,9 +4,9 @@ import Loading from '../components/common/Loading'
 import ErrorMessage from '../components/common/ErrorMessage'
 import BookDetail from '../components/books/BookDetail'
 import { useBook } from '../hooks/useBooks'
-import { useTrackView, useInteractions } from '../hooks/useInteractions'
-import { INTERACTION_TYPES } from '../utils/constants'
+import { useTrackView } from '../hooks/useInteractions'
 import { useAuthStore } from '../store/authStore'
+import { useCartActions } from '../hooks/useCartActions'
 import { useCart } from '../hooks/useCart'
 import useUIStore from '../store/uiStore'
 
@@ -15,7 +15,7 @@ const BookDetailPage = () => {
   const navigate = useNavigate()
   const { isAuthenticated } = useAuthStore()
   const { data: book, isLoading, isError } = useBook(bookId)
-  const { createInteraction } = useInteractions()
+  const { handleAddToCart: handleAddToCartAction, handleToggleFavorite, isFavorite } = useCartActions()
   const { addToCart } = useCart()
   const { openCart } = useUIStore()
 
@@ -42,11 +42,7 @@ const BookDetailPage = () => {
 
   const handleLike = async (item) => {
     if (!requireAuth()) return
-    await createInteraction({
-      book_id: item.id,
-      interaction_type: INTERACTION_TYPES.LIKE,
-    })
-    toast.success('Книга добавлена в избранное')
+    await handleToggleFavorite(item)
   }
 
   if (isLoading) return <Loading message="Загружаем книгу..." />
@@ -63,9 +59,9 @@ const BookDetailPage = () => {
     }
   }
 
-  const handleToggleFavoriteSimilar = (book) => {
+  const handleToggleFavoriteSimilar = async (book) => {
     if (!requireAuth()) return
-    toast.info('Функция избранного в разработке')
+    await handleToggleFavorite(book)
   }
 
   return (
@@ -74,6 +70,7 @@ const BookDetailPage = () => {
         book={book} 
         onAddToCart={handleAddToCart} 
         onLike={handleLike}
+        isFavorite={isFavorite?.(book.id) || false}
         onAddToCartSimilar={handleAddToCartSimilar}
         onToggleFavoriteSimilar={handleToggleFavoriteSimilar}
       />

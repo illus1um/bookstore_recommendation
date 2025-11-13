@@ -9,6 +9,7 @@ export const booksKeys = {
   details: (id) => [...booksKeys.all, 'detail', id],
   search: (query) => [...booksKeys.all, 'search', query],
   filters: () => [...booksKeys.all, 'filters'],
+  bulk: (ids) => [...booksKeys.all, 'bulk', ...(ids?.slice().sort() ?? [])],
 }
 
 export const useBookList = (filters) =>
@@ -96,4 +97,15 @@ export const useFormattedBook = (book) =>
       priceFormatted: formatPrice(book.price),
     }
   }, [book])
+
+export const useBooksByIds = (ids = []) =>
+  useQuery({
+    queryKey: booksKeys.bulk(ids),
+    queryFn: async () => {
+      const response = await booksApi.getBooksByIds(ids)
+      return response.data
+    },
+    enabled: Array.isArray(ids) && ids.length > 0,
+    staleTime: 1000 * 30,
+  })
 

@@ -48,6 +48,7 @@ const RecommendationDiscovery = ({
   genres = [], 
   onAddToCart, 
   onToggleFavorite,
+  isFavorite,
 }) => {
   const { user, isAuthenticated } = useAuthStore()
   const [activeStrategy, setActiveStrategy] = useState(
@@ -194,6 +195,7 @@ const RecommendationDiscovery = ({
             books={books} 
             onAddToCart={onAddToCart}
             onToggleFavorite={onToggleFavorite}
+            isFavorite={isFavorite}
           />
         )}
       </div>

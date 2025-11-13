@@ -15,6 +15,8 @@ export const booksApi = {
   getBooks: (params = {}) =>
     axiosInstance.get(`${BOOKS_BASE}/`, { params: sanitizeParams(params) }),
   getBook: (bookId) => axiosInstance.get(`${BOOKS_BASE}/${bookId}`),
+  getBooksByIds: (ids = []) =>
+    axiosInstance.get(`${BOOKS_BASE}/bulk`, { params: { ids } }),
   search: (query) =>
     axiosInstance.get(`${BOOKS_BASE}/search`, { params: sanitizeParams(query) }),
   getFilters: () => axiosInstance.get(`${BOOKS_BASE}/filters`),
