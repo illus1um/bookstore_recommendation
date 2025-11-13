@@ -6,6 +6,8 @@ export const ordersKeys = {
   root: ['orders'],
   list: (params) => [...ordersKeys.root, 'list', params],
   detail: (id) => [...ordersKeys.root, 'detail', id],
+  admin: ['orders', 'admin'],
+  adminList: (params) => [...ordersKeys.admin, 'list', params],
 }
 
 export const useOrders = (params) =>
@@ -63,6 +65,31 @@ export const useCancelOrder = () => {
       return response.data
     },
     onError: () => toast.error('Не удалось отменить заказ'),
+  })
+}
+
+export const useAdminOrders = (params) =>
+  useQuery({
+    queryKey: ordersKeys.adminList(params),
+    queryFn: async () => {
+      const response = await ordersApi.getAdminOrders(params)
+      return response.data
+    },
+    staleTime: 1000 * 15,
+  })
+
+export const useUpdateOrderStatus = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ orderId, status }) =>
+      ordersApi.updateOrderStatus(orderId, { status }),
+    onSuccess: () => {
+      toast.success('Статус заказа обновлён')
+      queryClient.invalidateQueries({ queryKey: ordersKeys.admin })
+      queryClient.invalidateQueries({ queryKey: ordersKeys.root })
+    },
+    onError: () => toast.error('Не удалось обновить статус заказа'),
   })
 }
 

@@ -7,6 +7,9 @@ export const ordersApi = {
   getOrders: (params = {}) => axiosInstance.get(ORDERS_BASE, { params }),
   getOrder: (orderId) => axiosInstance.get(`${ORDERS_BASE}/${orderId}`),
   cancelOrder: (orderId) => axiosInstance.put(`${ORDERS_BASE}/${orderId}/cancel`),
+  getAdminOrders: (params = {}) => axiosInstance.get(`${ORDERS_BASE}/admin`, { params }),
+  updateOrderStatus: (orderId, payload) =>
+    axiosInstance.patch(`${ORDERS_BASE}/${orderId}/status`, payload),
 }
 
 export default ordersApi

@@ -63,3 +63,10 @@ class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
+
+class UserListResponse(BaseModel):
+    """Схема ответа со списком пользователей."""
+    items: List[User]
+    total_count: int
+    page: int
+    limit: int

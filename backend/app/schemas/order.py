@@ -67,3 +67,8 @@ class OrderListResponse(BaseModel):
     page: int
     limit: int
 
+
+class OrderStatusUpdateRequest(BaseModel):
+    """Запрос на изменение статуса заказа."""
+
+    status: OrderStatus

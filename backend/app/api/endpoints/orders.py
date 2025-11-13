@@ -6,7 +6,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
 
-from app.api.deps import get_current_active_user
+from app.api.deps import get_current_active_user, get_current_admin_user
 from app.models.book import Book
 from app.models.cart import Cart
 from app.models.interaction import Interaction, InteractionType
@@ -18,9 +18,12 @@ from app.schemas.order import (
     OrderResponse,
     OrderItemResponse,
     ShippingAddressSchema,
+    OrderStatusUpdateRequest,
 )
 
 router = APIRouter()
+
+IMMUTABLE_STATUSES = {OrderStatus.CANCELLED, OrderStatus.DELIVERED}
 
 
 def _order_to_response(order: Order) -> OrderResponse:
@@ -172,6 +175,39 @@ async def list_orders(
     )
 
 
+@router.get("/admin", response_model=OrderListResponse)
+async def admin_list_orders(
+    page: int = Query(1, ge=1),
+    limit: int = Query(50, ge=1, le=200),
+    status_filter: Optional[OrderStatus] = Query(
+        None, alias="status", description="Фильтр по статусу заказа"
+    ),
+    current_admin: User = Depends(get_current_admin_user),
+):
+    """Возвращает заказы для администраторов с возможностью фильтрации по статусу."""
+
+    skip = (page - 1) * limit
+    query = Order.find()
+
+    if status_filter:
+        query = query.find(Order.status == status_filter)
+
+    total = await query.count()
+    items = (
+        await query.sort(-Order.created_at)
+        .skip(skip)
+        .limit(limit)
+        .to_list()
+    )
+
+    return OrderListResponse(
+        items=[_order_to_response(order) for order in items],
+        total_count=total,
+        page=page,
+        limit=limit,
+    )
+
+
 @router.get("/{order_id}", response_model=OrderResponse)
 async def get_order(
     order_id: str, current_user: User = Depends(get_current_active_user)
@@ -213,3 +249,30 @@ async def cancel_order(
 
     return _order_to_response(order)
 
+
+@router.patch("/{order_id}/status", response_model=OrderResponse)
+async def update_order_status(
+    order_id: str,
+    payload: OrderStatusUpdateRequest,
+    current_admin: User = Depends(get_current_admin_user),
+):
+    """Изменяет статус заказа (для администраторов)."""
+
+    order = await Order.get(order_id)
+    if not order:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Заказ не найден")
+
+    if order.status == payload.status:
+        return _order_to_response(order)
+
+    if order.status in IMMUTABLE_STATUSES and payload.status != order.status:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Статус завершённого или отменённого заказа изменить нельзя",
+        )
+
+    order.status = payload.status
+    order.updated_at = datetime.utcnow()
+    await order.save()
+
+    return _order_to_response(order)
