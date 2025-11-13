@@ -8,6 +8,8 @@ import { useAuthStore } from '../store/authStore'
 export const interactionKeys = {
   all: ['interactions'],
   user: (userId) => [...interactionKeys.all, 'user', userId],
+  admin: ['interactions', 'admin'],
+  adminList: (params) => [...interactionKeys.admin, 'list', params],
 }
 
 export const useInteractions = ({ fetch = false, userId: overrideUserId } = {}) => {
@@ -111,4 +113,14 @@ export const useTrackView = (bookId, enabled = true) => {
 }
 
 export default useInteractions
+
+export const useAdminInteractions = (params) =>
+  useQuery({
+    queryKey: interactionKeys.adminList(params),
+    queryFn: async () => {
+      const response = await interactionsApi.getAdminInteractions(params)
+      return response.data
+    },
+    staleTime: 1000 * 15,
+  })
 

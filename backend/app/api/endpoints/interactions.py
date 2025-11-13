@@ -1,13 +1,22 @@
 """
 API endpoints для работы с взаимодействиями.
 """
-from typing import List
-from fastapi import APIRouter, Depends, HTTPException, status
+from typing import List, Optional
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from app.models.interaction import Interaction, InteractionType
 from app.models.user import User
 from app.models.book import Book
-from app.schemas.interaction import InteractionCreate, Interaction as InteractionSchema
-from app.api.deps import get_current_user, get_current_active_user
+from app.schemas.interaction import (
+    InteractionCreate,
+    Interaction as InteractionSchema,
+    InteractionListResponse,
+    InteractionWithDetails,
+)
+from app.api.deps import (
+    get_current_user,
+    get_current_active_user,
+    get_current_admin_user,
+)
 
 router = APIRouter()
 
@@ -114,4 +123,65 @@ async def get_user_interactions(
     ).sort(-Interaction.timestamp).to_list()
     
     return interactions
+
+
+@router.get("/admin/list", response_model=InteractionListResponse)
+async def admin_list_interactions(
+    page: int = Query(1, ge=1),
+    limit: int = Query(100, ge=1, le=500),
+    interaction_type: Optional[InteractionType] = Query(None),
+    user_id: Optional[str] = Query(None),
+    book_id: Optional[str] = Query(None),
+    current_user: User = Depends(get_current_admin_user),
+):
+    """
+    Административный эндпоинт для получения списка взаимодействий.
+    """
+
+    skip = (page - 1) * limit
+    query = Interaction.find()
+
+    if interaction_type:
+        query = query.find(Interaction.interaction_type == interaction_type)
+    if user_id:
+        query = query.find(Interaction.user_id == user_id)
+    if book_id:
+        query = query.find(Interaction.book_id == book_id)
+
+    total = await query.count()
+    interactions = (
+        await query.sort(-Interaction.timestamp).skip(skip).limit(limit).to_list()
+    )
+
+    # Загружаем дополнительные данные
+    user_ids = {interaction.user_id for interaction in interactions}
+    book_ids = {interaction.book_id for interaction in interactions}
+
+    users = await User.find({"_id": {"$in": list(user_ids)}}).to_list() if user_ids else []
+    books = await Book.find({"_id": {"$in": list(book_ids)}}).to_list() if book_ids else []
+
+    user_map = {str(user.id): user for user in users}
+    book_map = {str(book.id): book for book in books}
+
+    enriched_items: List[InteractionWithDetails] = []
+    for interaction in interactions:
+        user_data = user_map.get(str(interaction.user_id))
+        book_data = book_map.get(str(interaction.book_id))
+
+        enriched_items.append(
+            InteractionWithDetails(
+                **interaction.model_dump(),
+                user_email=getattr(user_data, "email", None),
+                user_full_name=getattr(user_data, "full_name", None),
+                book_title=getattr(book_data, "title", None),
+                book_author=getattr(book_data, "author", None),
+            )
+        )
+
+    return InteractionListResponse(
+        items=enriched_items,
+        total_count=total,
+        page=page,
+        limit=limit,
+    )
 

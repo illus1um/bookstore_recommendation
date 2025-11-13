@@ -4,6 +4,7 @@ import BookForm from '../components/admin/BookForm'
 import BookTable from '../components/admin/BookTable'
 import BookEditModal from '../components/admin/BookEditModal'
 import AdminUsersTab from '../components/admin/AdminUsersTab'
+import AdminInteractionsTab from '../components/admin/AdminInteractionsTab'
 import Loading from '../components/common/Loading'
 import ErrorMessage from '../components/common/ErrorMessage'
 import Input from '../components/common/Input'
@@ -44,6 +45,7 @@ const ADMIN_TABS = [
   { id: 'books', label: 'Каталог' },
   { id: 'orders', label: 'Заказы' },
   { id: 'users', label: 'Пользователи' },
+  { id: 'interactions', label: 'Взаимодействия' },
 ]
 
 const AdminDashboardPage = () => {
@@ -697,6 +699,7 @@ const AdminDashboardPage = () => {
         )}
 
         {activeTab === 'users' && <AdminUsersTab />}
+        {activeTab === 'interactions' && <AdminInteractionsTab />}
       </div>
 
       <BookEditModal
