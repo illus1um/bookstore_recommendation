@@ -44,7 +44,11 @@ const STRATEGIES = [
   },
 ]
 
-const RecommendationDiscovery = ({ genres = [] }) => {
+const RecommendationDiscovery = ({ 
+  genres = [], 
+  onAddToCart, 
+  onToggleFavorite,
+}) => {
   const { user, isAuthenticated } = useAuthStore()
   const [activeStrategy, setActiveStrategy] = useState(
     isAuthenticated ? 'personal' : 'trending',
@@ -186,7 +190,11 @@ const RecommendationDiscovery = ({ genres = [] }) => {
             жанр.
           </div>
         ) : (
-          <RecommendationCarousel books={books} />
+          <RecommendationCarousel 
+            books={books} 
+            onAddToCart={onAddToCart}
+            onToggleFavorite={onToggleFavorite}
+          />
         )}
       </div>
     </section>

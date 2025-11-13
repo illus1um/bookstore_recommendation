@@ -88,11 +88,18 @@ const HomePage = () => {
       </section>
 
       <section className="container mx-auto px-4 py-12 md:py-16">
-        <RecommendationDiscovery genres={genresToShow} />
+        <RecommendationDiscovery 
+          genres={genresToShow} 
+          onAddToCart={handleAddToCart}
+          onToggleFavorite={handleToggleFavorite}
+        />
       </section>
 
       <section className="container mx-auto px-4 py-12 md:py-16">
-        <TrendingBooks />
+        <TrendingBooks 
+          onAddToCart={handleAddToCart}
+          onToggleFavorite={handleToggleFavorite}
+        />
       </section>
 
       <section className="container mx-auto px-4 py-12 md:py-16">

@@ -1,87 +1,87 @@
-# ОТЧЕТ ПО ПРАКТИЧЕСКОЙ РАБОТЕ №6
+# PRACTICAL WORK #6 REPORT
 
-## Тема: Создание финального проекта с использованием NoSQL базы данных
+## Topic: Creating a Final Project Using NoSQL Database
 
-## Система рекомендаций для книжного интернет-магазина
-
----
-
-**Выполнил:** [Ваше ФИО]  
-**Группа:** [Номер группы]  
-**Дата:** Ноябрь 2024  
-**Преподаватель:** [ФИО преподавателя]
+## Bookstore Recommendation System
 
 ---
 
-## 1. Номер и название практической работы
-
-**Практическая работа №6**
-
-**Название:** Создание финального проекта для NoSQL базы данных с системой коллаборативной фильтрации рекомендаций
-
-**Дисциплина:** Базы данных / NoSQL технологии
+**Student:** [Your Name]  
+**Group:** [Group Number]  
+**Date:** November 2024  
+**Instructor:** [Instructor Name]
 
 ---
 
-## 2. Цели и задачи практической работы
+## 1. Assignment Number and Title
 
-### 2.1 Цели работы
+**Practical Work #6**
 
-1. **Применить принципы NoSQL баз данных** для хранения и извлечения данных пользователей и информации о продуктах
-2. **Реализовать систему collaborative filtering** для персональных рекомендаций
-3. **Разработать user-friendly интерфейс** с персонализированными рекомендациями
-4. **Получить опыт в тестировании производительности и оптимизации** NoSQL систем
+**Title:** Creating a Final Project for NoSQL Database with Collaborative Filtering Recommendation System
 
-### 2.2 Задачи работы
-
-#### Обязательные требования:
-
-1. ✅ **User Registration and Profiles** - Регистрация пользователей, создание профилей с базовой информацией
-2. ✅ **Product Catalog** - Каталог продуктов (книг) с атрибутами: название, описание, категория, цена
-3. ✅ **User History** - Отслеживание истории покупок и взаимодействий пользователей с продуктами (просмотры, лайки и т.д.)
-4. ✅ **Recommendation Engine** - Движок рекомендаций, предлагающий продукты на основе поведения и предпочтений пользователей
-5. ✅ **Collaborative Filtering** - Использование алгоритмов коллаборативной фильтрации (user-based или item-based)
-6. ✅ **Search Functionality** - Функционал поиска продуктов по имени, категории и другим атрибутам
-7. ✅ **NoSQL Database** - Использование подходящей NoSQL БД (MongoDB, Redis, Neo4j)
-8. ✅ **Data Modeling** - Проектирование схемы БД для эффективного хранения данных пользователей, продуктов и взаимодействий
-9. ✅ **API** - Создание API для регистрации пользователей, управления каталогом продуктов и получения рекомендаций
-10. ✅ **User Experience** - Разработка пользовательского интерфейса (web или mobile)
-11. ✅ **Performance Testing** - Оценка производительности системы рекомендаций, оптимизация запросов
-
-#### Deliverables (Результаты):
-
-1. ✅ Детальное проектное предложение с описанием выбранной NoSQL БД, подхода к моделированию данных и алгоритма рекомендаций
-2. ✅ Функционирующая e-commerce платформа с интегрированной системой рекомендаций
-3. ✅ Документация по установке и запуску проекта
-4. ✅ Анализ производительности и отчет по оптимизации
-5. ✅ Презентация с объяснением дизайнерских решений и демонстрацией проекта
+**Course:** Databases / NoSQL Technologies
 
 ---
 
-## 3. Описание реализованного решения
+## 2. Goals and Objectives
 
-### 3.1 Выбор технологий
+### 2.1 Work Goals
+
+1. **Apply NoSQL database principles** for storing and retrieving user data and product information
+2. **Implement a collaborative filtering system** for personalized recommendations
+3. **Develop a user-friendly interface** with personalized recommendations
+4. **Gain experience in performance testing and optimization** of NoSQL systems
+
+### 2.2 Work Objectives
+
+#### Mandatory Requirements:
+
+1. ✅ **User Registration and Profiles** - User registration, profile creation with basic information
+2. ✅ **Product Catalog** - Product catalog (books) with attributes: name, description, category, price
+3. ✅ **User History** - Tracking purchase history and user interactions with products (views, likes, etc.)
+4. ✅ **Recommendation Engine** - Recommendation engine that suggests products based on user behavior and preferences
+5. ✅ **Collaborative Filtering** - Use of collaborative filtering algorithms (user-based or item-based)
+6. ✅ **Search Functionality** - Product search functionality by name, category, and other attributes
+7. ✅ **NoSQL Database** - Use of appropriate NoSQL database (MongoDB, Redis, Neo4j)
+8. ✅ **Data Modeling** - Database schema design for efficient storage of users, products, and interactions
+9. ✅ **API** - Creating API for user registration, product catalog management, and recommendations
+10. ✅ **User Experience** - Development of user interface (web or mobile)
+11. ✅ **Performance Testing** - Performance evaluation of recommendation system, query optimization
+
+#### Deliverables:
+
+1. ✅ Detailed project proposal describing chosen NoSQL database, data modeling approach, and recommendation algorithm
+2. ✅ Functioning e-commerce platform with integrated recommendation system
+3. ✅ Documentation on project setup and launch
+4. ✅ Performance analysis and optimization report
+5. ✅ Presentation explaining design choices and project demonstration
+
+---
+
+## 3. Description of Implemented Solution
+
+### 3.1 Technology Selection
 
 #### Backend:
-- **FastAPI 0.115.0** - современный асинхронный веб-фреймворк
-- **MongoDB 4.4+** - документная NoSQL база данных
-- **Beanie 1.27.0** - асинхронный ODM для MongoDB
-- **scikit-learn 1.5.0** - машинное обучение для рекомендаций
-- **JWT** - безопасная аутентификация
+- **FastAPI 0.115.0** - modern async web framework
+- **MongoDB 4.4+** - document NoSQL database
+- **Beanie 1.27.0** - async ODM for MongoDB
+- **scikit-learn 1.5.0** - machine learning for recommendations
+- **JWT** - secure authentication
 
 #### Frontend:
-- **React 18** - современная библиотека для UI
-- **Vite** - быстрый сборщик и dev-сервер
-- **Tailwind CSS** - utility-first CSS фреймворк
-- **TanStack Query** - управление серверным состоянием
+- **React 18** - modern UI library
+- **Vite** - fast bundler and dev server
+- **Tailwind CSS** - utility-first CSS framework
+- **TanStack Query** - server state management
 - **Zustand** - state management
 
-#### Инструменты тестирования:
-- **Locust 2.31.8** - нагрузочное тестирование
-- **Pytest** - unit-тестирование
-- **MongoDB Profiler** - анализ производительности БД
+#### Testing Tools:
+- **Locust 2.31.8** - load testing
+- **Pytest** - unit testing
+- **MongoDB Profiler** - performance analysis
 
-### 3.2 Архитектура проекта
+### 3.2 Project Architecture
 
 ```
 ┌─────────────────────────────────────────┐
@@ -118,9 +118,9 @@
 └─────────────────────────────────────────┘
 ```
 
-### 3.3 Модель данных MongoDB
+### 3.3 MongoDB Data Model
 
-#### Коллекция Users:
+#### Users Collection:
 ```javascript
 {
   _id: ObjectId,
@@ -134,7 +134,7 @@
 }
 ```
 
-#### Коллекция Books:
+#### Books Collection:
 ```javascript
 {
   _id: ObjectId,
@@ -151,7 +151,7 @@
 }
 ```
 
-#### Коллекция Interactions:
+#### Interactions Collection:
 ```javascript
 {
   _id: ObjectId,
@@ -168,27 +168,75 @@
 }
 ```
 
-**Индексы:**
+**Indexes:**
 - Compound: `(user_id, book_id)`, `(user_id, interaction_type)`
 - Compound: `(interaction_type, timestamp)`
-- Для оптимизации частых запросов
+- For optimizing frequent queries
 
-### 3.4 Алгоритмы рекомендаций
+#### Orders Collection:
+```javascript
+{
+  _id: ObjectId,
+  user_id: ObjectId,      // indexed
+  items: [
+    {
+      book_id: ObjectId,
+      quantity: Integer,
+      price: Float
+    }
+  ],
+  total_amount: Float,
+  status: String,         // "pending", "confirmed", "shipped", "delivered"
+  created_at: DateTime,   // indexed
+  updated_at: DateTime
+}
+```
+
+**Indexes:**
+- `user_id` - for fast access to user orders
+- `created_at` - for date sorting
+- `status` - for status filtering
+
+#### Cart (carts) Collection:
+```javascript
+{
+  _id: ObjectId,
+  user_id: ObjectId,      // unique, indexed
+  items: [
+    {
+      book_id: ObjectId,
+      quantity: Integer,
+      added_at: DateTime
+    }
+  ],
+  updated_at: DateTime
+}
+```
+
+**Indexes:**
+- `user_id` (unique) - one cart per user
+
+**Features:**
+- Denormalization: each user has only one cart
+- `items` array contains all cart items
+- On checkout, cart is either cleared or deleted
+
+### 3.4 Recommendation Algorithms
 
 #### 1. User-Based Collaborative Filtering
 
-**Принцип работы:**
-1. Построение матрицы User-Item (размер N_users × N_books)
-2. Вычисление сходства между пользователями через cosine similarity
-3. Для целевого пользователя находим K наиболее похожих пользователей
-4. Рекомендуем книги, которые понравились похожим пользователям
+**How it works:**
+1. Build User-Item matrix (size N_users × N_books)
+2. Calculate similarity between users using cosine similarity
+3. Find K most similar users for target user
+4. Recommend books liked by similar users
 
-**Формула оценки:**
+**Scoring Formula:**
 ```
 score(book) = Σ (similarity × interaction_strength × rating) / popularity_penalty
 ```
 
-**Веса взаимодействий:**
+**Interaction Weights:**
 - VIEW: 1.0
 - LIKE: 3.0
 - ADD_TO_CART: 5.0
@@ -197,392 +245,392 @@ score(book) = Σ (similarity × interaction_strength × rating) / popularity_pen
 
 #### 2. Content-Based Filtering
 
-**Принцип работы:**
-1. Анализ характеристик книги (жанр, автор, теги)
-2. Поиск похожих книг по этим характеристикам
-3. TF-IDF векторизация тегов
-4. Cosine similarity для вычисления сходства
+**How it works:**
+1. Analyze book characteristics (genre, author, tags)
+2. Find similar books by these characteristics
+3. TF-IDF vectorization of tags
+4. Cosine similarity for similarity calculation
 
-**Применение:**
-- Рекомендации "Похожие книги"
-- Fallback для новых пользователей
+**Application:**
+- "Similar books" recommendations
+- Fallback for new users
 
 #### 3. Popularity-Based
 
-**Принцип работы:**
-1. Анализ взаимодействий за последние N дней
-2. Взвешивание по типу и времени взаимодействия
-3. Учет среднего рейтинга книги
+**How it works:**
+- Analyze interactions over last N days
+- Weight by type and time of interaction
+- Consider average book rating
 
-**Применение:**
-- Раздел "Популярное"
-- Cold start для новых пользователей
+**Application:**
+- "Trending" section
+- Cold start for new users
 
 ---
 
-## 4. Скриншоты и демонстрация работы системы
+## 4. Screenshots and System Demonstration
 
-### 4.1 Главная страница
+### 4.1 Home Page
 
-![Главная страница](screenshots/homepage.png)
+![Home Page](screenshots/homepage.png)
 
-**Описание:**
-- Навигация по разделам сайта
-- Баннер с призывом к действию
-- Секции с рекомендациями: "Для вас", "Популярное", "Новинки"
-- Адаптивный дизайн для мобильных устройств
+**Description:**
+- Site navigation
+- Call-to-action banner
+- Recommendation sections: "For You", "Trending", "New Releases"
+- Responsive design for mobile devices
 
-### 4.2 Регистрация и вход
+### 4.2 Registration and Login
 
-![Регистрация](screenshots/register.png)
+![Registration](screenshots/register.png)
 
-**Функционал:**
-- Форма регистрации с валидацией
-- Возможность указать любимые жанры и авторов
-- Безопасное хранение паролей (bcrypt)
-- JWT аутентификация
+**Functionality:**
+- Registration form with validation
+- Option to specify favorite genres and authors
+- Secure password storage (bcrypt)
+- JWT authentication
 
-### 4.3 Каталог книг
+### 4.3 Book Catalog
 
-![Каталог](screenshots/catalog.png)
+![Catalog](screenshots/catalog.png)
 
-**Функционал:**
-- Отображение книг в виде карточек
-- Пагинация результатов
-- Фильтры:
-  - По жанру
-  - По автору
-  - По цене (min-max)
-  - По рейтингу
-  - По языку
-  - По году издания
-- Сортировка:
-  - По новизне
-  - По популярности
-  - По рейтингу
-  - По цене
+**Functionality:**
+- Books displayed as cards
+- Result pagination
+- Filters:
+  - By genre
+  - By author
+  - By price (min-max)
+  - By rating
+  - By language
+  - By publication year
+- Sorting:
+  - By recency
+  - By popularity
+  - By rating
+  - By price
 
-### 4.4 Поиск книг
+### 4.4 Book Search
 
-![Поиск](screenshots/search.png)
+![Search](screenshots/search.png)
 
-**Функционал:**
-- Полнотекстовый поиск по названию, автору, описанию
-- Мгновенные результаты
-- Подсветка совпадений
-- Интеграция с фильтрами
+**Functionality:**
+- Full-text search by title, author, description
+- Instant results
+- Match highlighting
+- Integration with filters
 
-### 4.5 Детальная страница книги
+### 4.5 Book Details Page
 
-![Детали книги](screenshots/book-detail.png)
+![Book Details](screenshots/book-detail.png)
 
-**Функционал:**
-- Полная информация о книге
-- Изображение обложки
-- Рейтинг и отзывы
-- Кнопки "Добавить в корзину", "В избранное"
-- Секция "Похожие книги" (Content-Based рекомендации)
+**Functionality:**
+- Complete book information
+- Cover image
+- Ratings and reviews
+- "Add to Cart", "Add to Favorites" buttons
+- "Similar Books" section (Content-Based recommendations)
 
-### 4.6 Персональные рекомендации
+### 4.6 Personal Recommendations
 
-![Рекомендации для вас](screenshots/recommendations.png)
+![Recommendations For You](screenshots/recommendations.png)
 
-**Функционал:**
-- Персональные рекомендации на основе Collaborative Filtering
-- Объяснение, почему рекомендуется книга
-- Разнообразие жанров
-- Динамическое обновление при новых взаимодействиях
+**Functionality:**
+- Personal recommendations based on Collaborative Filtering
+- Explanation why book is recommended
+- Diverse genres
+- Dynamic update on new interactions
 
-### 4.7 Популярные книги
+### 4.7 Trending Books
 
-![Популярное](screenshots/trending.png)
+![Trending](screenshots/trending.png)
 
-**Функционал:**
-- Топ популярных книг за последнюю неделю
-- Учет всех типов взаимодействий
-- Temporal decay (более свежие взаимодействия важнее)
+**Functionality:**
+- Top trending books from last week
+- Considers all interaction types
+- Temporal decay (recent interactions more important)
 
-### 4.8 Корзина
+### 4.8 Shopping Cart
 
-![Корзина](screenshots/cart.png)
+![Cart](screenshots/cart.png)
 
-**Функционал:**
-- Список добавленных книг
-- Изменение количества
-- Удаление из корзины
-- Расчет итоговой суммы
-- Переход к оформлению заказа
+**Functionality:**
+- List of added books
+- Quantity modification
+- Remove from cart
+- Total amount calculation
+- Proceed to checkout
 
-### 4.9 Профиль пользователя
+### 4.9 User Profile
 
-![Профиль](screenshots/profile.png)
+![Profile](screenshots/profile.png)
 
-**Функционал:**
-- Личная информация
-- Любимые жанры и авторы
-- История взаимодействий
-- История заказов
-- Редактирование предпочтений
+**Functionality:**
+- Personal information
+- Favorite genres and authors
+- Interaction history
+- Order history
+- Preference editing
 
-### 4.10 API Документация (Swagger)
+### 4.10 API Documentation (Swagger)
 
 ![Swagger UI](screenshots/swagger.png)
 
-**Функционал:**
-- Интерактивная документация всех endpoints
-- Возможность тестировать API прямо в браузере
-- Схемы запросов и ответов
-- Описание параметров
+**Functionality:**
+- Interactive documentation of all endpoints
+- API testing directly in browser
+- Request and response schemas
+- Parameter descriptions
 
 ---
 
-## 5. Результаты тестирования производительности
+## 5. Performance Testing Results
 
-### 5.1 Параметры тестовой среды
+### 5.1 Test Environment Parameters
 
-**База данных:**
-- Пользователи: 1,000
-- Книги: 5,000
-- Взаимодействия: 50,000
+**Database:**
+- Users: 1,000
+- Books: 5,000
+- Interactions: 50,000
 
-**Нагрузка:**
-- Одновременных пользователей: 50-100
-- Длительность теста: 5 минут
+**Load:**
+- Concurrent users: 50-100
+- Test duration: 5 minutes
 
-### 5.2 Результаты бенчмарка рекомендаций
+### 5.2 Recommendation Benchmark Results
 
-| Алгоритм | Среднее время | Медиана | 95%ile | RPS |
+| Algorithm | Average Time | Median | 95%ile | RPS |
 |----------|---------------|---------|--------|-----|
-| Collaborative Filtering | 180 мс | 165 мс | 520 мс | 5.5 |
-| Content-Based | 35 мс | 32 мс | 110 мс | 28.5 |
-| Popularity-Based | 55 мс | 50 мс | 135 мс | 18.2 |
-| Cold Start | 85 мс | 80 мс | 200 мс | 11.8 |
+| Collaborative Filtering | 180 ms | 165 ms | 520 ms | 5.5 |
+| Content-Based | 35 ms | 32 ms | 110 ms | 28.5 |
+| Popularity-Based | 55 ms | 50 ms | 135 ms | 18.2 |
+| Cold Start | 85 ms | 80 ms | 200 ms | 11.8 |
 
-**Выводы:**
-- ✅ Content-Based самый быстрый (35 мс)
-- ✅ Collaborative Filtering медленнее, но более точный (180 мс)
-- ✅ Все алгоритмы укладываются в приемлемое время для production
+**Conclusions:**
+- ✅ Content-Based is fastest (35 ms)
+- ✅ Collaborative Filtering is slower but more accurate (180 ms)
+- ✅ All algorithms fit acceptable time for production
 
-### 5.3 Нагрузочное тестирование API
+### 5.3 API Load Testing
 
-**Сценарий: 50 одновременных пользователей**
+**Scenario: 50 concurrent users**
 
 | Endpoint | Requests | Median | 95%ile | Fails | RPS |
 |----------|----------|--------|--------|-------|-----|
-| GET /books/ | 2,450 | 45 мс | 120 мс | 0 | 8.2 |
-| GET /books/search | 1,850 | 55 мс | 145 мс | 0 | 6.2 |
-| GET /recommendations/for-you | 1,200 | 185 мс | 520 мс | 2 | 4.0 |
-| POST /cart/add | 550 | 48 мс | 125 мс | 0 | 1.8 |
+| GET /books/ | 2,450 | 45 ms | 120 ms | 0 | 8.2 |
+| GET /books/search | 1,850 | 55 ms | 145 ms | 0 | 6.2 |
+| GET /recommendations/for-you | 1,200 | 185 ms | 520 ms | 2 | 4.0 |
+| POST /cart/add | 550 | 48 ms | 125 ms | 0 | 1.8 |
 
-**Общая статистика:**
-- Всего запросов: 10,650
-- Успешных: 10,647 (99.97%)
-- Средний RPS: 35.5
-- Средний response time: 68 мс
+**Overall Statistics:**
+- Total requests: 10,650
+- Successful: 10,647 (99.97%)
+- Average RPS: 35.5
+- Average response time: 68 ms
 
-**Выводы:**
-- ✅ Система стабильна при 50 пользователях
-- ✅ Низкий процент ошибок (< 0.1%)
-- ⚠️ При 100 пользователях появляются ошибки (1.4%)
+**Conclusions:**
+- ✅ System is stable with 50 users
+- ✅ Low error rate (< 0.1%)
+- ⚠️ At 100 users, errors appear (1.4%)
 
-### 5.4 Масштабируемость
+### 5.4 Scalability
 
-**Зависимость времени генерации рекомендаций от объема данных:**
+**Dependency of recommendation generation time on data volume:**
 
-| Пользователи | Книги | Взаимодействия | Время (мс) |
-|--------------|-------|----------------|------------|
+| Users | Books | Interactions | Time (ms) |
+|-------|-------|-------------|-----------|
 | 100 | 1,000 | 5,000 | 45 |
 | 500 | 2,500 | 25,000 | 95 |
 | 1,000 | 5,000 | 50,000 | 180 |
 | 2,000 | 10,000 | 100,000 | 420 |
 
-**Вывод:** Время растет нелинейно, требуется кэширование для масштабирования
+**Conclusion:** Time grows non-linearly, caching required for scaling
 
 ---
 
-## 6. Реализованные оптимизации
+## 6. Implemented Optimizations
 
-### 6.1 Оптимизация индексов MongoDB
+### 6.1 MongoDB Index Optimization
 
-**Добавленные индексы:**
+**Added indexes:**
 ```javascript
-// Compound индексы для частых запросов
+// Compound indexes for frequent queries
 db.interactions.createIndex({"user_id": 1, "book_id": 1})
 db.interactions.createIndex({"interaction_type": 1, "timestamp": -1})
 db.books.createIndex({"genre": 1, "average_rating": -1})
 ```
 
-**Результат:** Ускорение запросов на 35-47%
+**Result:** Query speed increased by 35-47%
 
-### 6.2 Батчевые операции
+### 6.2 Batch Operations
 
-**До:** Последовательная вставка (45 минут для 50K записей)  
-**После:** Батчевая вставка по 1000 записей (3 минуты)  
-**Улучшение:** В 15 раз быстрее
+**Before:** Sequential insert (45 minutes for 50K records)  
+**After:** Batch insert of 1000 records (3 minutes)  
+**Improvement:** 15x faster
 
-### 6.3 Ограничение кандидатов для Content-Based
+### 6.3 Candidate Limiting for Content-Based
 
-**Оптимизация:**
-- Сначала фильтруем по жанру
-- Ограничиваем до 250 кандидатов
-- Затем вычисляем детальное сходство
+**Optimization:**
+- First filter by genre
+- Limit to 250 candidates
+- Then calculate detailed similarity
 
-**Результат:** Ускорение с 180 мс до 35 мс (в 5 раз)
+**Result:** Speed increased from 180 ms to 35 ms (5x faster)
 
 ### 6.4 Popularity Penalty
 
-**Проблема:** Рекомендовались только популярные книги  
-**Решение:** Добавили штраф за популярность через логарифм  
-**Результат:** Разнообразие рекомендаций +45%
+**Problem:** Only popular books were recommended  
+**Solution:** Added popularity penalty through logarithm  
+**Result:** Recommendation diversity +45%
 
-### 6.5 Асинхронная архитектура
+### 6.5 Async Architecture
 
-**Реализация:**
-- Все операции с БД асинхронные (async/await)
+**Implementation:**
+- All DB operations async (async/await)
 - FastAPI + Uvicorn (ASGI)
 - Beanie ODM
 
-**Результат:** Throughput +60%, поддержка множественных запросов
+**Result:** Throughput +60%, supports multiple requests
 
 ---
 
-## 7. Трудности и их решения
+## 7. Challenges and Solutions
 
 ### 7.1 Cold Start Problem
 
-**Проблема:** Новые пользователи без истории не получают персональных рекомендаций
+**Problem:** New users without history don't get personal recommendations
 
-**Решение:**
-1. Запрос любимых жанров при регистрации
-2. Рекомендации по жанрам (60% квоты)
-3. Популярные книги (30%)
-4. Новинки (10%)
+**Solution:**
+1. Ask for favorite genres during registration
+2. Recommendations by genres (60% quota)
+3. Popular books (30%)
+4. New releases (10%)
 
-### 7.2 Производительность Collaborative Filtering
+### 7.2 Collaborative Filtering Performance
 
-**Проблема:** Медленная работа при большом количестве пользователей
+**Problem:** Slow with large number of users
 
-**Решение:**
-1. Оптимизация индексов БД
-2. Ограничение числа кандидатов
-3. План внедрения кэширования (Redis)
-4. Предварительный расчет рекомендаций в фоне
+**Solution:**
+1. DB index optimization
+2. Candidate limiting
+3. Plan to implement caching (Redis)
+4. Pre-computation of recommendations in background
 
-### 7.3 Качество рекомендаций
+### 7.3 Recommendation Quality
 
-**Проблема:** Рекомендации слишком предсказуемы (только популярные книги)
+**Problem:** Recommendations too predictable (only popular books)
 
-**Решение:**
-1. Popularity penalty - штраф за популярность
-2. Гибридный подход - комбинация алгоритмов
-3. Diversity promotion - продвижение разнообразия
+**Solution:**
+1. Popularity penalty - penalty for popularity
+2. Hybrid approach - algorithm combination
+3. Diversity promotion - promoting diversity
 
-### 7.4 Масштабирование базы данных
+### 7.4 Database Scaling
 
-**Проблема:** Коллекция Interactions растет очень быстро
+**Problem:** Interactions collection grows very quickly
 
-**Решение:**
-1. Эффективные индексы
-2. TTL индексы для старых данных (опционально)
-3. План шардинга по user_id для будущего
-
----
-
-## 8. Выводы и заключение
-
-### 8.1 Достигнутые результаты
-
-✅ **Все требования задания выполнены:**
-
-1. ✅ Реализована полнофункциональная e-commerce платформа
-2. ✅ Система collaborative filtering работает и дает релевантные рекомендации
-3. ✅ MongoDB эффективно используется для хранения данных
-4. ✅ API полностью задокументирован и протестирован
-5. ✅ Frontend интуитивный и user-friendly
-6. ✅ Проведено тестирование производительности
-7. ✅ Система оптимизирована и готова к использованию
-
-### 8.2 Преимущества реализованного решения
-
-1. **Современный технологический стек**
-   - Асинхронная архитектура для высокой производительности
-   - React для быстрого и отзывчивого UI
-   - MongoDB для гибкой схемы данных
-
-2. **Гибридная система рекомендаций**
-   - Collaborative filtering для персонализации
-   - Content-based для похожих товаров
-   - Popularity-based для трендов
-   - Эффективная обработка cold start
-
-3. **Хорошая производительность**
-   - Время ответа < 200 мс для большинства запросов
-   - Поддержка 50+ одновременных пользователей
-   - Масштабируемость до тысяч пользователей и книг
-
-4. **Качественная документация**
-   - API документация (Swagger)
-   - Руководства по установке
-   - Код хорошо структурирован и прокомментирован
-
-### 8.3 Недостатки и ограничения
-
-1. **Производительность Collaborative Filtering**
-   - Медленнее других алгоритмов
-   - Требует кэширования при масштабировании
-
-2. **Отсутствие кэширования**
-   - Рекомендации вычисляются каждый раз
-   - План внедрения Redis в будущем
-
-3. **Базовый поиск**
-   - Использует MongoDB text search
-   - Для production рекомендуется Elasticsearch
-
-### 8.4 Полученный опыт
-
-**Технические навыки:**
-- Работа с MongoDB (моделирование, индексы, оптимизация)
-- Реализация алгоритмов машинного обучения (collaborative filtering)
-- Разработка REST API (FastAPI)
-- Frontend разработка (React)
-- Нагрузочное тестирование (Locust)
-- Оптимизация производительности
-
-**Концептуальное понимание:**
-- Принципы NoSQL баз данных
-- Trade-offs при проектировании схемы данных
-- Работа с рекомендательными системами
-- Масштабирование веб-приложений
-
-### 8.5 Практическая применимость
-
-Разработанная система может быть использована:
-- ✅ Как основа для реального книжного магазина
-- ✅ Как образовательный проект для изучения NoSQL и рекомендаций
-- ✅ Как портфолио проект для демонстрации навыков
-- ✅ Как шаблон для других e-commerce проектов
-
-### 8.6 Направления дальнейшего развития
-
-**Краткосрочные улучшения:**
-1. Внедрение Redis для кэширования
-2. Предварительный расчет рекомендаций в фоне
-3. A/B тестирование различных алгоритмов
-
-**Долгосрочные улучшения:**
-1. Matrix Factorization для Collaborative Filtering
-2. Elasticsearch для продвинутого поиска
-3. Система отзывов и рейтингов
-4. Wishlist (список желаний)
-5. Email уведомления
-6. Мобильное приложение
+**Solution:**
+1. Efficient indexes
+2. TTL indexes for old data (optional)
+3. Sharding plan by user_id for future
 
 ---
 
-## 9. Список использованных источников
+## 8. Conclusions
 
-### Книги и статьи:
+### 8.1 Achieved Results
+
+✅ **All assignment requirements completed:**
+
+1. ✅ Fully functional e-commerce platform implemented
+2. ✅ Collaborative filtering system works and provides relevant recommendations
+3. ✅ MongoDB effectively used for data storage
+4. ✅ API fully documented and tested
+5. ✅ Frontend intuitive and user-friendly
+6. ✅ Performance testing conducted
+7. ✅ System optimized and ready for use
+
+### 8.2 Advantages of Implemented Solution
+
+1. **Modern Technology Stack**
+   - Async architecture for high performance
+   - React for fast and responsive UI
+   - MongoDB for flexible data schema
+
+2. **Hybrid Recommendation System**
+   - Collaborative filtering for personalization
+   - Content-based for similar items
+   - Popularity-based for trends
+   - Effective cold start handling
+
+3. **Good Performance**
+   - Response time < 200 ms for most requests
+   - Supports 50+ concurrent users
+   - Scalability to thousands of users and books
+
+4. **Quality Documentation**
+   - API documentation (Swagger)
+   - Setup guides
+   - Well-structured and commented code
+
+### 8.3 Limitations and Constraints
+
+1. **Collaborative Filtering Performance**
+   - Slower than other algorithms
+   - Requires caching for scaling
+
+2. **No Caching**
+   - Recommendations computed each time
+   - Redis implementation plan for future
+
+3. **Basic Search**
+   - Uses MongoDB text search
+   - Elasticsearch recommended for production
+
+### 8.4 Gained Experience
+
+**Technical Skills:**
+- Working with MongoDB (modeling, indexes, optimization)
+- Implementing machine learning algorithms (collaborative filtering)
+- REST API development (FastAPI)
+- Frontend development (React)
+- Load testing (Locust)
+- Performance optimization
+
+**Conceptual Understanding:**
+- NoSQL database principles
+- Trade-offs in schema design
+- Recommendation systems
+- Web application scaling
+
+### 8.5 Practical Applicability
+
+Developed system can be used:
+- ✅ As basis for real bookstore
+- ✅ As educational project for studying NoSQL and recommendations
+- ✅ As portfolio project for demonstrating skills
+- ✅ As template for other e-commerce projects
+
+### 8.6 Future Development Directions
+
+**Short-term improvements:**
+1. Implement Redis caching
+2. Pre-compute recommendations in background
+3. A/B test different algorithms
+
+**Long-term improvements:**
+1. Matrix Factorization for Collaborative Filtering
+2. Elasticsearch for advanced search
+3. Review and rating system
+4. Wishlist
+5. Email notifications
+6. Mobile application
+
+---
+
+## 9. References
+
+### Books and Articles:
 
 1. **Aggarwal, C. C.** (2016). *Recommender Systems: The Textbook*. Springer.
 
@@ -594,7 +642,7 @@ db.books.createIndex({"genre": 1, "average_rating": -1})
 
 5. **scikit-learn Documentation** (2024). Machine Learning in Python. https://scikit-learn.org/
 
-### Статьи и туториалы:
+### Articles and Tutorials:
 
 6. **Item-Based Collaborative Filtering Recommendation Algorithms** - Sarwar, B., Karypis, G., Konstan, J., & Riedl, J. (2001). WWW '01 Conference.
 
@@ -604,9 +652,9 @@ db.books.createIndex({"genre": 1, "average_rating": -1})
 
 9. **Performance Optimization in NoSQL Databases** - Journal of Database Management, 2022.
 
-10. **Асинхронное программирование в Python** - Real Python, 2024. https://realpython.com/async-io-python/
+10. **Async Programming in Python** - Real Python, 2024. https://realpython.com/async-io-python/
 
-### Репозитории и примеры кода:
+### Repositories and Code Examples:
 
 11. **Surprise** - A Python scikit for recommender systems. https://github.com/NicolasHug/Surprise
 
@@ -614,7 +662,7 @@ db.books.createIndex({"genre": 1, "average_rating": -1})
 
 13. **FastAPI Best Practices** - https://github.com/zhanymkanov/fastapi-best-practices
 
-### Инструменты и библиотеки:
+### Tools and Libraries:
 
 14. **Beanie ODM Documentation** - https://beanie-odm.dev/
 
@@ -624,7 +672,7 @@ db.books.createIndex({"genre": 1, "average_rating": -1})
 
 17. **TanStack Query** - https://tanstack.com/query/
 
-### Дополнительные ресурсы:
+### Additional Resources:
 
 18. **MongoDB University** - Free online courses on MongoDB
 
@@ -634,47 +682,47 @@ db.books.createIndex({"genre": 1, "average_rating": -1})
 
 ---
 
-## 10. Приложения
+## 10. Appendices
 
-### Приложение A: Инструкция по установке и запуску
+### Appendix A: Installation and Setup Instructions
 
-См. файлы:
-- `backend/README.md` - Установка и запуск backend
-- `frontend/README.md` - Установка и запуск frontend
-- `README.md` - Общее руководство по проекту
+See files:
+- `backend/README.md` - Backend setup and launch
+- `frontend/README.md` - Frontend setup and launch
+- `README.md` - General project guide
 
-### Приложение B: Структура проекта
+### Appendix B: Project Structure
 
 ```
 bookstore-recommendation/
 ├── backend/
 │   ├── app/
 │   │   ├── api/              # API endpoints
-│   │   ├── models/           # Модели данных (Beanie)
-│   │   ├── schemas/          # Pydantic схемы
-│   │   ├── services/         # Бизнес-логика (Recommendation Engine)
-│   │   ├── core/             # Конфигурация и безопасность
-│   │   └── db/               # База данных
-│   ├── tests/                # Тесты и бенчмарки
+│   │   ├── models/           # Data models (Beanie)
+│   │   ├── schemas/          # Pydantic schemas
+│   │   ├── services/         # Business logic (Recommendation Engine)
+│   │   ├── core/             # Configuration and security
+│   │   └── db/               # Database
+│   ├── tests/                # Tests and benchmarks
 │   └── requirements.txt
 ├── frontend/
 │   ├── src/
-│   │   ├── api/              # API клиенты
-│   │   ├── components/       # React компоненты
-│   │   ├── pages/            # Страницы
+│   │   ├── api/              # API clients
+│   │   ├── components/       # React components
+│   │   ├── pages/            # Pages
 │   │   ├── hooks/            # Custom hooks
 │   │   └── store/            # State management
 │   └── package.json
-├── docs/                     # Документация
+├── docs/                     # Documentation
 │   ├── PROJECT_PROPOSAL.md
 │   ├── PERFORMANCE_ANALYSIS.md
 │   └── FINAL_REPORT.md
 └── README.md
 ```
 
-### Приложение C: Примеры API запросов
+### Appendix C: API Request Examples
 
-**1. Регистрация:**
+**1. Registration:**
 ```bash
 POST /api/v1/auth/register
 {
@@ -682,52 +730,50 @@ POST /api/v1/auth/register
   "username": "testuser",
   "password": "password123",
   "full_name": "Test User",
-  "favorite_genres": ["Фантастика", "Детектив"]
+  "favorite_genres": ["Science Fiction", "Detective"]
 }
 ```
 
-**2. Получение рекомендаций:**
+**2. Get Recommendations:**
 ```bash
 GET /api/v1/recommendations/for-you?limit=10
 Authorization: Bearer <token>
 ```
 
-**3. Поиск книг:**
+**3. Search Books:**
 ```bash
-GET /api/v1/books/search?q=фантастика&limit=20
+GET /api/v1/books/search?q=science+fiction&limit=20
 ```
 
-### Приложение D: Скриншоты
+### Appendix D: Screenshots
 
-Все скриншоты находятся в папке `docs/screenshots/`:
-- `homepage.png` - Главная страница
-- `register.png` - Регистрация
-- `catalog.png` - Каталог
-- `search.png` - Поиск
-- `book-detail.png` - Детали книги
-- `recommendations.png` - Персональные рекомендации
-- `trending.png` - Популярное
-- `cart.png` - Корзина
-- `profile.png` - Профиль
-- `swagger.png` - API документация
-
----
-
-## Заключение
-
-Практическая работа №6 успешно выполнена. Все требования задания реализованы, система протестирована и готова к использованию. Получен ценный опыт работы с NoSQL базами данных, рекомендательными системами и современным веб-стеком.
-
-Проект демонстрирует:
-- Глубокое понимание принципов NoSQL
-- Умение реализовывать сложные алгоритмы (collaborative filtering)
-- Навыки fullstack разработки
-- Способность проводить тестирование производительности
-- Умение оптимизировать и масштабировать системы
+All screenshots are in the `docs/screenshots/` folder:
+- `homepage.png` - Home page
+- `register.png` - Registration
+- `catalog.png` - Catalog
+- `search.png` - Search
+- `book-detail.png` - Book details
+- `recommendations.png` - Personal recommendations
+- `trending.png` - Trending
+- `cart.png` - Cart
+- `profile.png` - Profile
+- `swagger.png` - API documentation
 
 ---
 
-**Дата сдачи:** [Дата]  
-**Подпись студента:** __________________  
-**Оценка преподавателя:** __________________
+## Conclusion
 
+Practical Work #6 successfully completed. All assignment requirements implemented, system tested and ready for use. Valuable experience gained working with NoSQL databases, recommendation systems, and modern web stack.
 
+The project demonstrates:
+- Deep understanding of NoSQL principles
+- Ability to implement complex algorithms (collaborative filtering)
+- Fullstack development skills
+- Ability to conduct performance testing
+- Ability to optimize and scale systems
+
+---
+
+**Submission Date:** [Date]  
+**Student Signature:** __________________  
+**Instructor Grade:** __________________

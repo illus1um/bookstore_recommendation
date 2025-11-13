@@ -1,34 +1,34 @@
-# 🚀 Быстрый старт
+# 🚀 Quick Start Guide
 
-Это краткое руководство поможет вам запустить проект за 5 минут.
+This quick guide will help you launch the project in 5 minutes.
 
 ---
 
-## ⚡ Быстрая установка
+## ⚡ Quick Installation
 
-### Шаг 1: Клонирование
+### Step 1: Clone Repository
 
 ```bash
-git clone https://github.com/[ваш-username]/bookstore-recommendation.git
+git clone https://github.com/[your-username]/bookstore-recommendation.git
 cd bookstore-recommendation
 ```
 
-### Шаг 2: Backend
+### Step 2: Backend Setup
 
 ```bash
 cd backend
 
-# Создание виртуального окружения
+# Create virtual environment
 python -m venv venv
 
-# Активация (выберите вашу ОС)
+# Activate (choose your OS)
 venv\Scripts\activate          # Windows
 source venv/bin/activate       # Linux/Mac
 
-# Установка зависимостей
+# Install dependencies
 pip install -r requirements.txt
 
-# Создание .env файла
+# Create .env file
 echo "MONGODB_URL=mongodb://localhost:27017
 DATABASE_NAME=bookstore_db
 SECRET_KEY=your-secret-key-min-32-characters-please-change-in-production
@@ -39,39 +39,39 @@ PROJECT_NAME=Bookstore Recommendation System
 BACKEND_CORS_ORIGINS=[\"http://localhost:3000\",\"http://localhost:5173\"]
 ENVIRONMENT=development" > .env
 
-# Инициализация БД
+# Initialize database
 python init_database.py
 
-# Опционально: Загрузка тестовых данных
+# Optional: Load test data
 python -m app.db.seed
 
-# Запуск сервера
+# Start server
 uvicorn app.main:app --reload
 ```
 
-Backend запущен на: **http://localhost:8000**
+Backend running on: **http://localhost:8000**
 
-### Шаг 3: Frontend (новый терминал)
+### Step 3: Frontend Setup (New Terminal)
 
 ```bash
 cd frontend
 
-# Установка зависимостей
+# Install dependencies
 npm install
 
-# Создание .env файла
+# Create .env file
 echo "VITE_API_URL=http://localhost:8000
 VITE_API_TIMEOUT=15000" > .env
 
-# Запуск
+# Start development server
 npm run dev
 ```
 
-Frontend запущен на: **http://localhost:5173**
+Frontend running on: **http://localhost:5173**
 
 ---
 
-## 🎯 Проверка работы
+## 🎯 Verification
 
 1. **Frontend:** http://localhost:5173
 2. **API Docs:** http://localhost:8000/docs
@@ -79,77 +79,77 @@ Frontend запущен на: **http://localhost:5173**
 
 ---
 
-## 📝 Первые шаги
+## 📝 First Steps
 
-### 1. Регистрация
+### 1. Registration
 
-1. Откройте http://localhost:5173/register
-2. Заполните форму:
+1. Open http://localhost:5173/register
+2. Fill the form:
    - Email: `test@example.com`
    - Username: `testuser`
    - Password: `password123`
-   - Любимые жанры: выберите 2-3
-3. Нажмите "Зарегистрироваться"
+   - Favorite genres: select 2-3
+3. Click "Register"
 
-### 2. Просмотр каталога
+### 2. Browse Catalog
 
-1. Перейдите в раздел "Каталог"
-2. Попробуйте фильтры по жанру, автору, цене
-3. Используйте поиск
+1. Go to "Catalog" section
+2. Try filters by genre, author, price
+3. Use search
 
-### 3. Получение рекомендаций
+### 3. Get Recommendations
 
-1. Просмотрите несколько книг (откройте детали)
-2. Добавьте несколько в корзину
-3. Вернитесь на главную страницу
-4. Посмотрите секцию "Для вас" - персональные рекомендации!
+1. Browse several books (open details)
+2. Add some to cart
+3. Return to homepage
+4. Check "For You" section - personal recommendations!
 
 ---
 
-## 🧪 Тестирование
+## 🧪 Testing
 
-### Генерация больших данных
+### Generate Large Dataset
 
 ```bash
 cd backend
 python -m tests.generate_test_data
 ```
 
-### Бенчмарк рекомендаций
+### Benchmark Recommendations
 
 ```bash
 python -m tests.benchmark_recommendations
 ```
 
-### Нагрузочное тестирование
+### Load Testing
 
 ```bash
 pip install locust
 locust -f tests/locustfile.py --host=http://localhost:8000
 ```
 
-Откройте http://localhost:8089
+Open http://localhost:8089
 
 ---
 
-## 📚 Документация
+## 📚 Documentation
 
-- **Полная документация:** [README.md](README.md)
-- **Проектное предложение:** [docs/PROJECT_PROPOSAL.md](docs/PROJECT_PROPOSAL.md)
-- **Анализ производительности:** [docs/PERFORMANCE_ANALYSIS.md](docs/PERFORMANCE_ANALYSIS.md)
-- **Итоговый отчет:** [docs/FINAL_REPORT.md](docs/FINAL_REPORT.md)
-- **Руководство по тестированию:** [docs/TESTING_GUIDE.md](docs/TESTING_GUIDE.md)
+- **Full Documentation:** [README.md](README.md)
+- **Project Proposal:** [docs/PROJECT_PROPOSAL.md](docs/PROJECT_PROPOSAL.md)
+- **Performance Analysis:** [docs/PERFORMANCE_ANALYSIS.md](docs/PERFORMANCE_ANALYSIS.md)
+- **Final Report:** [docs/FINAL_REPORT.md](docs/FINAL_REPORT.md)
+- **Testing Guide:** [docs/TESTING_GUIDE.md](docs/TESTING_GUIDE.md)
 
 ---
 
-## 🆘 Частые проблемы
+## 🆘 Common Issues
 
-### MongoDB не подключается
+### MongoDB Connection Failed
 
-**Проблема:** `pymongo.errors.ServerSelectionTimeoutError`
+**Problem:** `pymongo.errors.ServerSelectionTimeoutError`
 
-**Решение:**
-1. Проверьте, что MongoDB запущен:
+**Solution:**
+1. Check if MongoDB is running:
    ```bash
    # Windows
    sc query MongoDB
@@ -158,65 +158,64 @@ locust -f tests/locustfile.py --host=http://localhost:8000
    systemctl status mongod
    ```
 
-2. Проверьте `MONGODB_URL` в `.env`
+2. Check `MONGODB_URL` in `.env`
 
-### Frontend не может подключиться к Backend
+### Frontend Can't Connect to Backend
 
-**Проблема:** `Network Error` в консоли браузера
+**Problem:** `Network Error` in browser console
 
-**Решение:**
-1. Проверьте, что backend запущен на порту 8000
-2. Проверьте `VITE_API_URL` в `frontend/.env`
-3. Проверьте CORS настройки в backend `.env`
+**Solution:**
+1. Verify backend is running on port 8000
+2. Check `VITE_API_URL` in `frontend/.env`
+3. Verify CORS settings in backend `.env`
 
-### Не работают рекомендации
+### No Recommendations
 
-**Проблема:** Пустой раздел "Для вас"
+**Problem:** Empty "For You" section
 
-**Решение:**
-1. Убедитесь, что вы зарегистрированы и вошли
-2. Взаимодействуйте с книгами (просмотр, добавление в корзину)
-3. Для холодного старта укажите любимые жанры в профиле
+**Solution:**
+1. Make sure you're registered and logged in
+2. Interact with books (view, add to cart)
+3. For cold start, specify favorite genres in profile
 
 ---
 
-## 💡 Полезные команды
+## 💡 Useful Commands
 
 ```bash
 # Backend
 cd backend
-uvicorn app.main:app --reload              # Запуск с hot reload
-python -m app.db.seed                      # Загрузка тестовых данных
-python -m tests.generate_test_data         # Генерация больших данных
-python -m tests.benchmark_recommendations  # Бенчмарк
+uvicorn app.main:app --reload              # Start with hot reload
+python -m app.db.seed                      # Load test data
+python -m tests.generate_test_data         # Generate large dataset
+python -m tests.benchmark_recommendations  # Benchmark
 
 # Frontend
 cd frontend
-npm run dev          # Запуск dev сервера
-npm run build        # Production сборка
-npm run preview      # Предпросмотр production
-npm run lint         # Проверка линтером
+npm run dev          # Start dev server
+npm run build        # Production build
+npm run preview      # Preview production
+npm run lint         # Check linter
 
 # MongoDB
 mongosh              # MongoDB shell
-use bookstore_db     # Переключение на БД
-db.books.find()      # Просмотр книг
-db.users.find()      # Просмотр пользователей
+use bookstore_db     # Switch to database
+db.books.find()      # View books
+db.users.find()      # View users
 ```
 
 ---
 
-## 🎉 Готово!
+## 🎉 Done!
 
-Теперь у вас запущен полнофункциональный книжный магазин с системой рекомендаций!
+Now you have a fully functional bookstore with recommendation system!
 
-**Что дальше?**
-- Изучите [документацию](README.md)
-- Посмотрите [API документацию](http://localhost:8000/docs)
-- Запустите [тесты производительности](docs/TESTING_GUIDE.md)
-- Прочитайте [отчет по проекту](docs/FINAL_REPORT.md)
+**What's Next?**
+- Explore [documentation](README.md)
+- Check [API documentation](http://localhost:8000/docs)
+- Run [performance tests](docs/TESTING_GUIDE.md)
+- Read [project report](docs/FINAL_REPORT.md)
 
 ---
 
-**Вопросы?** Создайте issue в репозитории или напишите на [ваш email]
-
+**Questions?** Create an issue in the repository or email [your email]

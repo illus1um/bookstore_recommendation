@@ -1,12 +1,3 @@
-"""
-Современный движок рекомендаций для книжного магазина.
-Реализует несколько независимых алгоритмов:
- - content-based (похожие книги)
- - collaborative filtering (user-based)
- - popularity/trending
- - cold-start обработку
- - подбор новинок
-"""
 from __future__ import annotations
 
 import math
@@ -81,7 +72,13 @@ class RecommendationEngine:
             }
         ).to_list()
 
-        user_seen_books = {str(interaction.book_id) for interaction in target_interactions}
+        # Исключаем из выдачи только уже купленные книги
+        purchased_interactions = [
+            interaction
+            for interaction in target_interactions
+            if interaction.interaction_type == InteractionType.PURCHASE
+        ]
+        user_purchased_books = {str(interaction.book_id) for interaction in purchased_interactions}
 
         # Если совсем нет взаимодействий - cold start
         if not target_interactions:
@@ -127,7 +124,7 @@ class RecommendationEngine:
             for book_id, book_idx in book_index_map.items():
                 if other_vector[book_idx] <= 0:
                     continue
-                if book_id in user_seen_books:
+                if book_id in user_purchased_books:
                     continue
 
                 book = book_map.get(book_id)
@@ -283,6 +280,12 @@ class RecommendationEngine:
         recommendations: List[Book] = []
         seen: set[str] = set()
 
+        # В fallback исключаем только купленные книги
+        purchased = await Interaction.find(
+            {"user_id": user.id, "interaction_type": InteractionType.PURCHASE.value}
+        ).to_list()
+        seen.update(str(interaction.book_id) for interaction in purchased)
+
         if user.favorite_genres:
             preferred = await Book.find(
                 {"genre": {"$in": user.favorite_genres}}
@@ -323,7 +326,10 @@ class RecommendationEngine:
         books = await query.sort(-Book.average_rating).limit(limit * 3).to_list()
 
         if user_id:
-            interactions = await Interaction.find({"user_id": user_id}).to_list()
+            # Исключаем из жанровых рекомендаций только уже купленные книги
+            interactions = await Interaction.find(
+                {"user_id": user_id, "interaction_type": InteractionType.PURCHASE.value}
+            ).to_list()
             seen = {str(inter.book_id) for inter in interactions}
             books = [book for book in books if str(book.id) not in seen]
 

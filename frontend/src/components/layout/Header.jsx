@@ -1,7 +1,6 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { BookOpen, LogIn, LogOut, ShoppingCart, UserCircle } from 'lucide-react'
 import Button from '../common/Button'
-import SearchBar from '../books/SearchBar'
 import { useAuthStore } from '../../store/authStore'
 import { useAuth } from '../../hooks/useAuth'
 import { useCart } from '../../hooks/useCart'
@@ -17,7 +16,6 @@ const Header = () => {
   const navItems = [
     { to: '/', label: 'Главная' },
     { to: '/catalog', label: 'Каталог' },
-    { to: '/profile', label: 'Профиль', protected: true },
     { to: '/admin', label: 'Админ', admin: true },
   ]
 
@@ -35,7 +33,7 @@ const Header = () => {
               <BookOpen className="h-5 w-5" />
             </span>
             <span className="text-lg font-semibold text-neutral-900">
-              Bookstore Rec
+              Bookstore
             </span>
           </Link>
           <nav className="hidden items-center gap-4 md:flex">
@@ -57,10 +55,6 @@ const Header = () => {
               )
             })}
           </nav>
-        </div>
-
-        <div className="hidden max-w-xl flex-1 md:block">
-          <SearchBar />
         </div>
 
         <div className="flex items-center gap-3">
@@ -113,9 +107,6 @@ const Header = () => {
             </div>
           )}
         </div>
-      </div>
-      <div className="border-t border-white/60 bg-white/70 px-4 py-3 md:hidden">
-        <SearchBar />
       </div>
     </header>
   )

@@ -41,23 +41,23 @@ const BookDetail = ({ book, onAddToCart, onLike, onAddToCartSimilar, onToggleFav
   const handleIncrease = () => setQuantity((prev) => prev + 1)
 
   return (
-    <div className="grid gap-10 lg:grid-cols-[1fr,1.2fr]">
-      <div className="space-y-6">
-        <div className="overflow-hidden rounded-3xl bg-white shadow-card">
+    <div className="grid gap-6 lg:grid-cols-[400px,1fr] xl:grid-cols-[450px,1fr]">
+      <div className="space-y-4">
+        <div className="overflow-hidden rounded-2xl bg-white shadow-card">
           <img
             src={book.cover_image_url}
             alt={`Обложка ${book.title}`}
-            className="h-full w-full object-cover"
+            className="h-auto w-full max-h-[600px] object-contain"
           />
         </div>
-        <div className="rounded-3xl bg-white p-6 shadow-card">
-          <div className="flex items-center gap-3">
+        <div className="rounded-2xl bg-white p-4 shadow-card">
+          <div className="flex items-center gap-2">
             {tabs.map((tab) => (
               <button
                 key={tab.key}
                 type="button"
                 onClick={() => setActiveTab(tab.key)}
-                className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${
                   activeTab === tab.key
                     ? 'bg-primary text-white shadow-card'
                     : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
@@ -89,18 +89,18 @@ const BookDetail = ({ book, onAddToCart, onLike, onAddToCartSimilar, onToggleFav
         </div>
       </div>
 
-      <div className="space-y-6">
-        <div className="rounded-3xl bg-white p-6 shadow-card sm:p-8">
-          <span className="text-xs font-bold uppercase tracking-wider text-primary sm:text-sm">
+      <div className="space-y-4">
+        <div className="rounded-2xl bg-white p-5 shadow-card">
+          <span className="text-xs font-bold uppercase tracking-wider text-primary">
             {book.genre}
           </span>
-          <h1 className="mt-3 text-2xl font-bold text-neutral-900 leading-tight sm:text-3xl">
+          <h1 className="mt-2 text-xl font-bold text-neutral-900 leading-tight sm:text-2xl">
             {book.title}
           </h1>
-          <p className="mt-2 text-base text-neutral-500 sm:text-lg">{book.author}</p>
-          <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-neutral-500 sm:gap-4">
-            <div className="flex items-center gap-1.5">
-              <Star className="h-4 w-4 fill-amber-400 text-amber-400 sm:h-5 sm:w-5" />
+          <p className="mt-1.5 text-sm text-neutral-500 sm:text-base">{book.author}</p>
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-neutral-500 sm:gap-3 sm:text-sm">
+            <div className="flex items-center gap-1">
+              <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
               <span className="font-semibold text-neutral-900">
                 {book.average_rating?.toFixed(1) ?? '—'}
               </span>
@@ -112,43 +112,43 @@ const BookDetail = ({ book, onAddToCart, onLike, onAddToCartSimilar, onToggleFav
             <span className="text-neutral-300">•</span>
             <span className={`font-semibold ${stockState.tone}`}>{stockState.label}</span>
           </div>
-          <div className="mt-6 space-y-5 rounded-2xl bg-gradient-to-br from-neutral-50 to-neutral-100/50 p-5 sm:p-6">
+          <div className="mt-5 space-y-4 rounded-2xl bg-gradient-to-br from-neutral-50 to-neutral-100/50 p-4">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
                   Цена
                 </p>
-                <p className="mt-1 text-3xl font-extrabold text-neutral-900 sm:text-4xl">
+                <p className="mt-0.5 text-2xl font-extrabold text-neutral-900 sm:text-3xl">
                   {formatPrice(book.price)}
                 </p>
               </div>
-              <div className="flex items-center gap-2 self-start rounded-full border-2 border-neutral-200 bg-white px-3 py-2 shadow-sm sm:self-center">
+              <div className="flex items-center gap-1.5 self-start rounded-full border-2 border-neutral-200 bg-white px-2 py-1.5 shadow-sm sm:self-center">
                 <button
                   type="button"
-                  className="flex h-9 w-9 items-center justify-center rounded-full text-neutral-600 transition hover:bg-primary hover:text-white active:scale-95"
+                  className="flex h-7 w-7 items-center justify-center rounded-full text-neutral-600 transition hover:bg-primary hover:text-white active:scale-95"
                   onClick={handleDecrease}
                   aria-label="Уменьшить количество"
                 >
-                  <Minus className="h-4 w-4" />
+                  <Minus className="h-3.5 w-3.5" />
                 </button>
-                <span className="w-10 text-center text-lg font-bold text-neutral-900">
+                <span className="w-8 text-center text-base font-bold text-neutral-900">
                   {quantity}
                 </span>
                 <button
                   type="button"
-                  className="flex h-9 w-9 items-center justify-center rounded-full text-neutral-600 transition hover:bg-primary hover:text-white active:scale-95"
+                  className="flex h-7 w-7 items-center justify-center rounded-full text-neutral-600 transition hover:bg-primary hover:text-white active:scale-95"
                   onClick={handleIncrease}
                   aria-label="Увеличить количество"
                 >
-                  <Plus className="h-4 w-4" />
+                  <Plus className="h-3.5 w-3.5" />
                 </button>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               <Button
-                size="lg"
-                leftIcon={<ShoppingCart className="h-5 w-5" />}
+                size="md"
+                leftIcon={<ShoppingCart className="h-4 w-4" />}
                 disabled={book.stock <= 0}
                 onClick={() => onAddToCart?.(book, quantity)}
                 className="col-span-full shadow-md transition-transform active:scale-[0.98]"
@@ -157,8 +157,8 @@ const BookDetail = ({ book, onAddToCart, onLike, onAddToCartSimilar, onToggleFav
               </Button>
               <Button
                 variant="secondary"
-                size="lg"
-                leftIcon={<BookmarkPlus className="h-5 w-5" />}
+                size="md"
+                leftIcon={<BookmarkPlus className="h-4 w-4" />}
                 onClick={() => onLike?.(book)}
                 className="col-span-full transition-transform active:scale-[0.98]"
               >
@@ -168,11 +168,11 @@ const BookDetail = ({ book, onAddToCart, onLike, onAddToCartSimilar, onToggleFav
           </div>
         </div>
 
-        <div className="rounded-3xl bg-white p-6 shadow-card">
-          <div className="mb-6 flex items-center justify-between">
+        <div className="rounded-2xl bg-white p-4 shadow-card">
+          <div className="mb-4 flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-semibold text-neutral-900">Вам может понравиться</h3>
-              <p className="mt-1 text-xs text-neutral-500">Похожие книги по жанру и стилю</p>
+              <h3 className="text-base font-semibold text-neutral-900">Вам может понравиться</h3>
+              <p className="mt-0.5 text-xs text-neutral-500">Похожие книги по жанру и стилю</p>
             </div>
           </div>
           {similarLoading ? (

@@ -69,7 +69,7 @@ const BookDetailPage = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-12 md:py-16">
+    <div className="container mx-auto px-4 py-6 md:py-8">
       <BookDetail 
         book={book} 
         onAddToCart={handleAddToCart} 

@@ -1,5 +1,5 @@
-import { useMemo } from 'react'
-import { XCircle } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Search, XCircle } from 'lucide-react'
 import Button from '../common/Button'
 import Input from '../common/Input'
 import { SORT_OPTIONS } from '../../utils/constants'
@@ -29,6 +29,7 @@ const toggleValue = (values, value) => {
 
 const BookFilters = ({ value = {}, onChange, onReset, options }) => {
   const filters = useMemo(() => ({ ...defaultFilters, ...value }), [value])
+  const [searchTerm, setSearchTerm] = useState(filters.query || '')
 
   const genres = options?.genres ?? []
   const authors = options?.authors ?? []
@@ -36,9 +37,25 @@ const BookFilters = ({ value = {}, onChange, onReset, options }) => {
   const years = options?.publication_years ?? []
   const priceRange = options?.price_range ?? {}
 
-  const handleField = (field, fieldValue) => {
+  const handleField = useCallback((field, fieldValue) => {
     onChange?.({ ...filters, [field]: fieldValue })
-  }
+  }, [filters, onChange])
+
+  // Синхронизируем локальное состояние с пропсами
+  useEffect(() => {
+    setSearchTerm(filters.query || '')
+  }, [filters.query])
+
+  // Debounce для поиска
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchTerm !== filters.query) {
+        handleField('query', searchTerm)
+      }
+    }, 500)
+
+    return () => clearTimeout(timer)
+  }, [searchTerm, filters.query, handleField])
 
   return (
     <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-white to-neutral-50/50 shadow-lg ring-1 ring-neutral-900/5">
@@ -63,6 +80,26 @@ const BookFilters = ({ value = {}, onChange, onReset, options }) => {
       </div>
 
       <div className="p-6">
+        {/* Поле поиска */}
+        <div className="mb-6 rounded-xl border border-neutral-100 bg-white p-4 shadow-sm">
+          <div className="mb-3 flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/80">
+              <Search className="h-4 w-4 text-white" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-neutral-900">Поиск</p>
+              <p className="text-xs text-neutral-500">По названию, автору или жанру</p>
+            </div>
+          </div>
+          <Input
+            placeholder="Введите название книги, автора или жанр..."
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+            leftAddon={<Search className="h-4 w-4 text-neutral-400" />}
+            className="rounded-lg border-neutral-200 bg-neutral-50 text-sm transition hover:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20"
+          />
+        </div>
+
         {/* Основные фильтры - красивая сетка */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Жанры */}

@@ -73,19 +73,28 @@
 
 ### Коллекции MongoDB
 
+**Всего 5 коллекций:**
+
 ```
-┌─────────────┐   ┌─────────────┐   ┌──────────────┐
-│    Users    │   │    Books    │   │ Interactions │
-├─────────────┤   ├─────────────┤   ├──────────────┤
-│ _id         │   │ _id         │   │ _id          │
-│ email       │   │ title       │   │ user_id      │
-│ username    │   │ author      │   │ book_id      │
-│ favorite_   │   │ genre       │   │ interaction_ │
-│   genres    │   │ price       │   │   type       │
-│ favorite_   │   │ rating      │   │ timestamp    │
-│   authors   │   │ tags        │   │ metadata     │
-└─────────────┘   └─────────────┘   └──────────────┘
+┌──────────┐  ┌──────────┐  ┌────────────┐  ┌──────────┐  ┌──────────┐
+│  Users   │  │  Books   │  │Interactions│  │  Orders  │  │  Carts   │
+├──────────┤  ├──────────┤  ├────────────┤  ├──────────┤  ├──────────┤
+│ _id      │  │ _id      │  │ _id        │  │ _id      │  │ _id      │
+│ email    │  │ title    │  │ user_id    │  │ user_id  │  │ user_id  │
+│ username │  │ author   │  │ book_id    │  │ items[]  │  │ items[]  │
+│ favorite │  │ genre    │  │ inter_type │  │ total_   │  │ updated_ │
+│  _genres │  │ price    │  │ timestamp  │  │  amount  │  │  at      │
+│ favorite │  │ rating   │  │ metadata   │  │ status   │  │          │
+│ _authors │  │ tags     │  │            │  │ created  │  │          │
+└──────────┘  └──────────┘  └────────────┘  └──────────┘  └──────────┘
 ```
+
+**Ключевые особенности:**
+- `users`: Профили пользователей с предпочтениями
+- `books`: Каталог книг с рейтингами и тегами  
+- `interactions`: История всех взаимодействий (view, like, purchase, etc.)
+- `orders`: Завершенные заказы с историей
+- `carts`: Активные корзины (одна на пользователя)
 
 ### Принципы моделирования
 
